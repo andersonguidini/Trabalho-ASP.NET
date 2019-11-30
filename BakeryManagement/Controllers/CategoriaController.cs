@@ -57,6 +57,12 @@ namespace BakeryManagement.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Delete(int id)
+        {
+            _categoriaDAO.Remover(id);
+            return RedirectToAction("Index");
+        }
+
         /*
         
 
