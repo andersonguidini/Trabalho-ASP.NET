@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Domain;
 using Repository;
+using FireSharp.Interfaces;
+using FireSharp.Config;
+using FireSharp.Response;
 
 namespace BakeryManagement.Controllers
 {
@@ -14,9 +17,18 @@ namespace BakeryManagement.Controllers
     {
         private readonly CategoriaDAO _categoriaDAO;
 
+        IFirebaseConfig config = new FirebaseConfig
+        {
+            AuthSecret = "l0mQk1Nwesby4YaQUeUPRm87yiOVFTE0q6RX7nW3",
+            BasePath = "https://trabalho-asp.firebaseio.com/"
+        };
+        IFirebaseClient firebase;
+            
+
         public CategoriaController(CategoriaDAO categoriaDAO)
         {
             _categoriaDAO = categoriaDAO;
+            firebase = new FireSharp.FirebaseClient(config);
         }
 
         // GET: Categoria
@@ -30,19 +42,31 @@ namespace BakeryManagement.Controllers
         {
             return View();
         }
-        
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Categoria categoria, string drpTipo)
+        public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
         {
-            categoria.Tipo = drpTipo;
-            if (_categoriaDAO.Create(categoria))
-            {
-                return RedirectToAction("Index");
-            }
-            ModelState.AddModelError("", "Essa categoria já existe!");
-            return View(categoria);
+            var data = categoria;
+
+            SetResponse reponse = await firebase.SetAsync("Categoria/"+data.Nome,data);
+            Categoria result = reponse.ResultAs<Categoria>();
+
+            return RedirectToAction("Index");
         }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult Create(Categoria categoria, string drpTipo)
+        //{
+
+        //    categoria.Tipo = drpTipo;
+        //    if (_categoriaDAO.Create(categoria))
+        //    {
+        //        return RedirectToAction("Index");
+        //    }
+        //    ModelState.AddModelError("", "Essa categoria já existe!");
+        //    return View(categoria);
+        //}
 
         public IActionResult Edit(int id)
         {

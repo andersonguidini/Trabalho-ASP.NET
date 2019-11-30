@@ -19,8 +19,8 @@ namespace Domain
         [Required(ErrorMessage = "Campo obrigatório!")]
         public string Nome { get; set; }
 
-        [Display(Name = "Associado à:")]
-        [Required(ErrorMessage = "Campo obrigatório!")]
+        //[Display(Name = "Associado à:")]
+        //[Required(ErrorMessage = "Campo obrigatório!")]
         public string Tipo { get; set; }
     }
 }
