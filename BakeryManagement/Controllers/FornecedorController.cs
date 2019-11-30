@@ -12,35 +12,17 @@ namespace BakeryManagement.Controllers
 {
     public class FornecedorController : Controller
     {
-        private readonly Context _context;
+        private readonly FornecedorDAO _fornecedorDAO;
 
-        public FornecedorController(Context context)
+        public FornecedorController(FornecedorDAO fornecedorDAO)
         {
-            _context = context;
+            _fornecedorDAO = fornecedorDAO;
         }
 
         // GET: Fornecedor
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Fornecedores.ToListAsync());
-        }
-
-        // GET: Fornecedor/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var fornecedor = await _context.Fornecedores
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (fornecedor == null)
-            {
-                return NotFound();
-            }
-
-            return View(fornecedor);
+            return View(_fornecedorDAO.ListarTodos());
         }
 
         // GET: Fornecedor/Create
@@ -48,19 +30,18 @@ namespace BakeryManagement.Controllers
         {
             return View();
         }
-
-        // POST: Fornecedor/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome")] Fornecedor fornecedor)
+        public IActionResult Create(Fornecedor fornecedor)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(fornecedor);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (_fornecedorDAO.Create(fornecedor))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("", "Esse fornecedor já existe!");
             }
             return View(fornecedor);
         }
