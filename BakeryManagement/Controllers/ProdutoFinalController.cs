@@ -33,7 +33,39 @@ namespace BakeryManagement.Controllers
         // GET: ProdutoFinal
         public IActionResult Index()
         {
-            return View(_produtoFinalDAO.ListarTodos());
+            List<ProdutoFinal> produtosFinais = new List<ProdutoFinal>();
+
+            FirebaseResponse reponse = firebase.Get("ProdutoFinal/Counter");
+            String counter = reponse.ResultAs<String>();
+
+//-------------------------------------------------------------------------------------------------//
+
+            if (counter == null)
+            {
+                counter = "0";
+            }
+
+            int cont = 0;
+
+            while (true)
+            {
+                if (cont == Convert.ToInt32(counter))
+                {
+                    break;
+                }
+                cont = cont + 1;
+
+                reponse = firebase.Get("ProdutoFinal/" + cont);
+                ProdutoFinal produtoFinal = reponse.ResultAs<ProdutoFinal>();
+
+                if (produtoFinal != null)
+                {
+                    produtoFinal.Id = Convert.ToInt32(cont);
+                    produtosFinais.Add(produtoFinal);
+                }
+            }
+
+            return View(produtosFinais);
         }
 
         // GET: ProdutoFinal/Create
@@ -42,71 +74,53 @@ namespace BakeryManagement.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
-        //{
-        //    var data = categoria;
-
-        //    SetResponse reponse = await firebase.SetAsync("Categoria/" + data.Nome, data);
-        //    Categoria result = reponse.ResultAs<Categoria>();
-
-        //    return RedirectToAction("Index");
-        //}
-
-
-
-
-        public IActionResult Edit(int id)
-        {
-            return View
-                (_produtoFinalDAO.BuscarPorId(id));
-        }
-
         [HttpPost]
-        public IActionResult Edit(ProdutoFinal pf)
+        public async Task<IActionResult> Create(ProdutoFinal produtoFinal, string drpTipo)
         {
-            _produtoFinalDAO.Editar(pf);
+            FirebaseResponse reponse = firebase.Get("ProdutoFinal/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            SetResponse reponseFirebase;
+            ProdutoFinal result;
+
+            if (counter == null)
+            {
+                reponseFirebase = await firebase.SetAsync("ProdutoFinal/Counter", "1");
+                result = reponse.ResultAs<ProdutoFinal>();
+
+                counter = "0";
+            }
+
+            Int32 intCounter = Convert.ToInt32(counter);
+            intCounter = intCounter + 1;
+
+            var data = produtoFinal;
+
+            reponseFirebase = await firebase.SetAsync("ProdutoFinal/" + intCounter, data);
+            result = reponseFirebase.ResultAs<ProdutoFinal>();
+
+            reponseFirebase = await firebase.SetAsync("ProdutoFinal/Counter", Convert.ToString(intCounter));
+
             return RedirectToAction("Index");
         }
 
-
-        /*
-        // POST: ProdutoFinal/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Preco,Custo,PrazoValidade")] ProdutoFinal produtoFinal)
+        public IActionResult Edit(int id)
         {
-            if (id != produtoFinal.Id)
-            {
-                return NotFound();
-            }
+            FirebaseResponse reponse = firebase.Get("ProdutoFinal/" + id);
+            ProdutoFinal produtoFinal = reponse.ResultAs<ProdutoFinal>();
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(produtoFinal);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProdutoFinalExists(produtoFinal.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
             return View(produtoFinal);
         }
 
-        // GET: ProdutoFinal/Delete/5
+        [HttpPost]
+        public async Task<IActionResult> Edit(ProdutoFinal pf)
+        {
+            SetResponse reponseFirebase = await firebase.SetAsync("ProdutoFinal/" + pf.Id, pf);
+            ProdutoFinal result = reponseFirebase.ResultAs<ProdutoFinal>();
+
+            return RedirectToAction("Index");
+        }
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -114,32 +128,10 @@ namespace BakeryManagement.Controllers
                 return NotFound();
             }
 
-            var produtoFinal = await _context.ProdutosFinais
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (produtoFinal == null)
-            {
-                return NotFound();
-            }
+            FirebaseResponse reponse = await firebase.DeleteAsync("ProdutoFinal/" + id);
+            ProdutoFinal produtoFinal = reponse.ResultAs<ProdutoFinal>();
 
-            return View(produtoFinal);
+            return RedirectToAction("Index");
         }
-
-        // POST: ProdutoFinal/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var produtoFinal = await _context.ProdutosFinais.FindAsync(id);
-            _context.ProdutosFinais.Remove(produtoFinal);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProdutoFinalExists(int id)
-        {
-            return _context.ProdutosFinais.Any(e => e.Id == id);
-        }
-
-    */
     }
 }

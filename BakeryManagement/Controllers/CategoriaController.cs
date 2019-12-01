@@ -39,6 +39,8 @@ namespace BakeryManagement.Controllers
             FirebaseResponse reponse = firebase.Get("Categoria/Counter");
             String counter = reponse.ResultAs<String>();
 
+//-------------------------------------------------------------------------------------------------//
+
             if(counter == null)
             {
                 counter = "0";
@@ -119,15 +121,7 @@ namespace BakeryManagement.Controllers
 
             return RedirectToAction("Index");
         }
-
-        //public IActionResult Delete(int id)
-        //{
-        //    _categoriaDAO.Remover(id);
-        //    return RedirectToAction("Index");
-        //}
-
-        // GET: Categoria/Delete/5
-        
+    
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -140,22 +134,5 @@ namespace BakeryManagement.Controllers
 
             return RedirectToAction("Index");
         }
-
-        /*// POST: Categoria/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var categoria = await _context.Categorias.FindAsync(id);
-            _context.Categorias.Remove(categoria);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool CategoriaExists(int id)
-        {
-            return _context.Categorias.Any(e => e.Id == id);
-        }
-         */
     }
 }

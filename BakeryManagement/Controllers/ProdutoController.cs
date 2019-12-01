@@ -9,6 +9,7 @@ using Domain;
 using Repository;
 using FireSharp.Interfaces;
 using FireSharp.Config;
+using FireSharp.Response;
 
 namespace BakeryManagement.Controllers
 {
@@ -32,7 +33,39 @@ namespace BakeryManagement.Controllers
         // GET: Produto
         public IActionResult Index()
         {
-            return View(_produtoDAO.ListarTodos());
+            List<Produto> produtos = new List<Produto>();
+
+            FirebaseResponse reponse = firebase.Get("Produto/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            //-------------------------------------------------------------------------------------------------//
+
+            if (counter == null)
+            {
+                counter = "0";
+            }
+
+            int cont = 0;
+
+            while (true)
+            {
+                if (cont == Convert.ToInt32(counter))
+                {
+                    break;
+                }
+                cont = cont + 1;
+
+                reponse = firebase.Get("Produto/" + cont);
+                Produto produto = reponse.ResultAs<Produto>();
+
+                if (produto != null)
+                {
+                    produto.Id = Convert.ToInt32(cont);
+                    produtos.Add(produto);
+                }
+            }
+
+            return View(produtos);
         }
 
         // GET: Produto/Create
@@ -41,73 +74,53 @@ namespace BakeryManagement.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
-        //{
-        //    var data = categoria;
-
-        //    SetResponse reponse = await firebase.SetAsync("Categoria/" + data.Nome, data);
-        //    Categoria result = reponse.ResultAs<Categoria>();
-
-        //    return RedirectToAction("Index");
-        //}
-
-
-
-
-
-
-
-        public IActionResult Edit(int id)
-        {
-            return View
-                (_produtoDAO.BuscarPorId(id));
-        }
-
         [HttpPost]
-        public IActionResult Edit(Produto p)
+        public async Task<IActionResult> Create(Produto produto, string drpTipo)
         {
-            _produtoDAO.Editar(p);
+            FirebaseResponse reponse = firebase.Get("Produto/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            SetResponse reponseFirebase;
+            Produto result;
+
+            if (counter == null)
+            {
+                reponseFirebase = await firebase.SetAsync("Produto/Counter", "1");
+                result = reponse.ResultAs<Produto>();
+
+                counter = "0";
+            }
+
+            Int32 intCounter = Convert.ToInt32(counter);
+            intCounter = intCounter + 1;
+
+            var data = produto;
+
+            reponseFirebase = await firebase.SetAsync("Produto/" + intCounter, data);
+            result = reponseFirebase.ResultAs<Produto>();
+
+            reponseFirebase = await firebase.SetAsync("Produto/Counter", Convert.ToString(intCounter));
+
             return RedirectToAction("Index");
         }
 
-        /*
-        // POST: Produto/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Preco,Quantidade,Unidade,PrazoValidade")] Produto produto)
+        public IActionResult Edit(int id)
         {
-            if (id != produto.Id)
-            {
-                return NotFound();
-            }
+            FirebaseResponse reponse = firebase.Get("Produto/" + id);
+            Produto produto = reponse.ResultAs<Produto>();
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(produto);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProdutoExists(produto.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
             return View(produto);
         }
 
-        // GET: Produto/Delete/5
+        [HttpPost]
+        public async Task<IActionResult> Edit(Produto p)
+        {
+            SetResponse reponseFirebase = await firebase.SetAsync("Produto/" + p.Id, p);
+            Produto result = reponseFirebase.ResultAs<Produto>();
+
+            return RedirectToAction("Index");
+        }
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -115,31 +128,10 @@ namespace BakeryManagement.Controllers
                 return NotFound();
             }
 
-            var produto = await _context.Produtos
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (produto == null)
-            {
-                return NotFound();
-            }
+            FirebaseResponse reponse = await firebase.DeleteAsync("Produto/" + id);
+            Produto produto = reponse.ResultAs<Produto>();
 
-            return View(produto);
+            return RedirectToAction("Index");
         }
-
-        // POST: Produto/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var produto = await _context.Produtos.FindAsync(id);
-            _context.Produtos.Remove(produto);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProdutoExists(int id)
-        {
-            return _context.Produtos.Any(e => e.Id == id);
-        }
-        */
     }
 }

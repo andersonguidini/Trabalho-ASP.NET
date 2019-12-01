@@ -34,7 +34,39 @@ namespace BakeryManagement.Controllers
         // GET: Receita
         public IActionResult Index()
         {
-            return View (_receitaDAO.ListarTodos());
+            List<Receita> receitas = new List<Receita>();
+
+            FirebaseResponse reponse = firebase.Get("Receita/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            //-------------------------------------------------------------------------------------------------//
+
+            if (counter == null)
+            {
+                counter = "0";
+            }
+
+            int cont = 0;
+
+            while (true)
+            {
+                if (cont == Convert.ToInt32(counter))
+                {
+                    break;
+                }
+                cont = cont + 1;
+
+                reponse = firebase.Get("Receita/" + cont);
+                Receita receita = reponse.ResultAs<Receita>();
+
+                if (receita != null)
+                {
+                    receita.Id = Convert.ToInt32(cont);
+                    receitas.Add(receita);
+                }
+            }
+
+            return View(receitas);
         }
 
         // GET: Receita/Create
@@ -44,98 +76,64 @@ namespace BakeryManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Receita receita)
+        public async Task<IActionResult> Create(Receita receita, string drpTipo)
         {
+            FirebaseResponse reponse = firebase.Get("Receita/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            SetResponse reponseFirebase;
+            Receita result;
+
+            if (counter == null)
+            {
+                reponseFirebase = await firebase.SetAsync("Receita/Counter", "1");
+                result = reponse.ResultAs<Receita>();
+
+                counter = "0";
+            }
+
+            Int32 intCounter = Convert.ToInt32(counter);
+            intCounter = intCounter + 1;
+
             var data = receita;
-           
-            SetResponse reponse = await firebase.SetAsync("Receita/" + data.Nome, data);
-            
-            Receita result = reponse.ResultAs<Receita>();
+
+            reponseFirebase = await firebase.SetAsync("Receita/" + intCounter, data);
+            result = reponseFirebase.ResultAs<Receita>();
+
+            reponseFirebase = await firebase.SetAsync("Receita/Counter", Convert.ToString(intCounter));
 
             return RedirectToAction("Index");
         }
 
-        // GET: Receita/Edit/5
         public IActionResult Edit(int id)
         {
-            return View
-                (_receitaDAO.BuscarPorId(id));
+            FirebaseResponse reponse = firebase.Get("Receita/" + id);
+            Receita receita = reponse.ResultAs<Receita>();
+
+            return View(receita);
         }
 
         [HttpPost]
-        public IActionResult Edit(Receita r)
+        public async Task<IActionResult> Edit(Receita r)
         {
-            _receitaDAO.Editar(r);
+            SetResponse reponseFirebase = await firebase.SetAsync("Receita/" + r.Id, r);
+            Receita result = reponseFirebase.ResultAs<Receita>();
+
             return RedirectToAction("Index");
         }
 
-        //    // POST: Receita/Edit/5
-        //    // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //    // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //    [HttpPost]
-        //    [ValidateAntiForgeryToken]
-        //    public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Rendimento,TempoDePreparo")] Receita receita)
-        //    {
-        //        if (id != receita.Id)
-        //        {
-        //            return NotFound();
-        //        }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //        if (ModelState.IsValid)
-        //        {
-        //            try
-        //            {
-        //                _context.Update(receita);
-        //                await _context.SaveChangesAsync();
-        //            }
-        //            catch (DbUpdateConcurrencyException)
-        //            {
-        //                if (!ReceitaExists(receita.Id))
-        //                {
-        //                    return NotFound();
-        //                }
-        //                else
-        //                {
-        //                    throw;
-        //                }
-        //            }
-        //            return RedirectToAction(nameof(Index));
-        //        }
-        //        return View(receita);
-        //    }
+            FirebaseResponse reponse = await firebase.DeleteAsync("Receita/" + id);
+            Receita receita = reponse.ResultAs<Receita>();
 
-        //    // GET: Receita/Delete/5
-        //    public async Task<IActionResult> Delete(int? id)
-        //    {
-        //        if (id == null)
-        //        {
-        //            return NotFound();
-        //        }
+            return RedirectToAction("Index");
+        }
 
-        //        var receita = await _context.Receitas
-        //            .FirstOrDefaultAsync(m => m.Id == id);
-        //        if (receita == null)
-        //        {
-        //            return NotFound();
-        //        }
-
-        //        return View(receita);
-        //    }
-
-        //    // POST: Receita/Delete/5
-        //    [HttpPost, ActionName("Delete")]
-        //    [ValidateAntiForgeryToken]
-        //    public async Task<IActionResult> DeleteConfirmed(int id)
-        //    {
-        //        var receita = await _context.Receitas.FindAsync(id);
-        //        _context.Receitas.Remove(receita);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-
-        //    private bool ReceitaExists(int id)
-        //    {
-        //        return _context.Receitas.Any(e => e.Id == id);
-        //    }
     }
 }

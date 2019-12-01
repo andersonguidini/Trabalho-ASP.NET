@@ -33,7 +33,39 @@ namespace BakeryManagement.Controllers
         // GET: Fornecedor
         public IActionResult Index()
         {
-            return View(_fornecedorDAO.ListarTodos());
+            List<Fornecedor> fornecedores = new List<Fornecedor>();
+
+            FirebaseResponse reponse = firebase.Get("Fornecedor/Counter");
+            String counter = reponse.ResultAs<String>();
+
+//-------------------------------------------------------------------------------------------------//
+
+            if (counter == null)
+            {
+                counter = "0";
+            }
+
+            int cont = 0;
+
+            while (true)
+            {
+                if (cont == Convert.ToInt32(counter))
+                {
+                    break;
+                }
+                cont = cont + 1;
+
+                reponse = firebase.Get("Fornecedor/" + cont);
+                Fornecedor fornecedor = reponse.ResultAs<Fornecedor>();
+
+                if (fornecedor != null)
+                {
+                    fornecedor.Id = Convert.ToInt32(cont);
+                    fornecedores.Add(fornecedor);
+                }
+            }
+
+            return View(fornecedores);
         }
 
         // GET: Fornecedor/Create
@@ -41,107 +73,65 @@ namespace BakeryManagement.Controllers
         {
             return View();
         }
-        
-
-
-
 
         [HttpPost]
-        public async Task<IActionResult> Create(Fornecedor fornecedor)
+        public async Task<IActionResult> Create(Fornecedor fornecedor, string drpTipo)
         {
+            FirebaseResponse reponse = firebase.Get("Fornecedor/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            SetResponse reponseFirebase;
+            Fornecedor result;
+
+            if (counter == null)
+            {
+                reponseFirebase = await firebase.SetAsync("Fornecedor/Counter", "1");
+                result = reponse.ResultAs<Fornecedor>();
+
+                counter = "0";
+            }
+
+            Int32 intCounter = Convert.ToInt32(counter);
+            intCounter = intCounter + 1;
+
             var data = fornecedor;
 
-            SetResponse reponse = await firebase.SetAsync("Fornecedor/" + data.Nome, data);
-            Fornecedor result = reponse.ResultAs<Fornecedor>();
+            reponseFirebase = await firebase.SetAsync("Fornecedor/" + intCounter, data);
+            result = reponseFirebase.ResultAs<Fornecedor>();
+
+            reponseFirebase = await firebase.SetAsync("Fornecedor/Counter", Convert.ToString(intCounter));
 
             return RedirectToAction("Index");
         }
 
-
-
-
-
-        // GET: Fornecedor/Edit/5
         public IActionResult Edit(int id)
         {
-            return View
-                (_fornecedorDAO.BuscarPorId(id));
+            FirebaseResponse reponse = firebase.Get("Fornecedor/" + id);
+            Fornecedor fornecedor = reponse.ResultAs<Fornecedor>();
+
+            return View(fornecedor);
         }
 
         [HttpPost]
-        public IActionResult Edit(Fornecedor f)
+        public async Task<IActionResult> Edit(Fornecedor f)
         {
-            _fornecedorDAO.Editar(f);
+            SetResponse reponseFirebase = await firebase.SetAsync("Fornecedor/" + f.Id, f);
+            Fornecedor result = reponseFirebase.ResultAs<Fornecedor>();
+
             return RedirectToAction("Index");
         }
 
-        //// POST: Fornecedor/Edit/5
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] Fornecedor fornecedor)
-        //{
-        //    if (id != fornecedor.Id)
-        //    {
-        //        return NotFound();
-        //    }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(fornecedor);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!FornecedorExists(fornecedor.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(fornecedor);
-        //}
+            FirebaseResponse reponse = await firebase.DeleteAsync("Fornecedor/" + id);
+            Fornecedor fornecedor = reponse.ResultAs<Fornecedor>();
 
-        //// GET: Fornecedor/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var fornecedor = await _context.Fornecedores
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (fornecedor == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(fornecedor);
-        //}
-
-        //// POST: Fornecedor/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    var fornecedor = await _context.Fornecedores.FindAsync(id);
-        //    _context.Fornecedores.Remove(fornecedor);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-        //private bool FornecedorExists(int id)
-        //{
-        //    return _context.Fornecedores.Any(e => e.Id == id);
-        //}
+            return RedirectToAction("Index");
+        }
     }
 }
