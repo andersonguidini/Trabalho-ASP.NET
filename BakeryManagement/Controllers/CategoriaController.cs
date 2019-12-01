@@ -39,10 +39,21 @@ namespace BakeryManagement.Controllers
             FirebaseResponse reponse = firebase.Get("Categoria/Counter");
             String counter = reponse.ResultAs<String>();
 
-            int cont = 1;
+            if(counter == null)
+            {
+                counter = "0";
+            }
+
+            int cont = 0;
 
             while (true)
             {
+                if (cont == Convert.ToInt32(counter))
+                {
+                    break;
+                }
+                cont = cont + 1;
+
                 reponse = firebase.Get("Categoria/"+cont);
                 Categoria categoria = reponse.ResultAs<Categoria>();
 
@@ -51,12 +62,6 @@ namespace BakeryManagement.Controllers
                     categoria.Id = Convert.ToInt32(cont);
                     categorias.Add(categoria);
                 }
-
-                if (cont == Convert.ToInt32(counter))
-                {
-                    break;
-                }
-                cont = cont + 1;
             }
 
             return View(categorias);
