@@ -46,7 +46,11 @@ namespace BakeryManagement.Controllers
                 reponse = firebase.Get("Categoria/"+cont);
                 Categoria categoria = reponse.ResultAs<Categoria>();
 
-                categorias.Add(categoria);
+                if(categoria != null)
+                {
+                    categoria.Id = Convert.ToInt32(cont);
+                    categorias.Add(categoria);
+                }
 
                 if (cont == Convert.ToInt32(counter))
                 {
@@ -54,8 +58,6 @@ namespace BakeryManagement.Controllers
                 }
                 cont = cont + 1;
             }
-            //FirebaseResponse reponse = firebase.Get("Categoria/");
-            //List<Categoria> categorias = reponse.ResultAs<List<Categoria>>();
 
             return View(categorias);
         }
@@ -65,9 +67,6 @@ namespace BakeryManagement.Controllers
         {
             return View();
         }
-
-
-
 
         [HttpPost]
         public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
@@ -95,87 +94,35 @@ namespace BakeryManagement.Controllers
             result = reponseFirebase.ResultAs<Categoria>();
 
             reponseFirebase = await firebase.SetAsync("Categoria/Counter", Convert.ToString(intCounter));
-            //result = reponse.ResultAs<String>();
 
             return RedirectToAction("Index");
         }
-
-
-
-
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Create(Categoria categoria, string drpTipo)
-        //{
-
-        //    categoria.Tipo = drpTipo;
-        //    if (_categoriaDAO.Create(categoria))
-        //    {
-        //        return RedirectToAction("Index");
-        //    }
-        //    ModelState.AddModelError("", "Essa categoria já existe!");
-        //    return View(categoria);
-        //}
 
         public IActionResult Edit(int id)
         {
-            return View
-                (_categoriaDAO.BuscarPorId(id));
-        }
+            FirebaseResponse reponse = firebase.Get("Categoria/" + id);
+            Categoria categoria = reponse.ResultAs<Categoria>();
 
-        [HttpPost]
-        public IActionResult Edit(Categoria c)
-        {
-            _categoriaDAO.Editar(c);
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Delete(int id)
-        {
-            _categoriaDAO.Remover(id);
-            return RedirectToAction("Index");
-        }
-
-        /*
-        
-
-        // POST: Categoria/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Tipo")] Categoria categoria)
-        {
-            if (id != categoria.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(categoria);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CategoriaExists(categoria.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
             return View(categoria);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Edit(Categoria c)
+        {
+            SetResponse reponseFirebase = await firebase.SetAsync("Categoria/"+c.Id, c);
+            Categoria result = reponseFirebase.ResultAs<Categoria>();
+
+            return RedirectToAction("Index");
+        }
+
+        //public IActionResult Delete(int id)
+        //{
+        //    _categoriaDAO.Remover(id);
+        //    return RedirectToAction("Index");
+        //}
+
         // GET: Categoria/Delete/5
+        
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -183,17 +130,13 @@ namespace BakeryManagement.Controllers
                 return NotFound();
             }
 
-            var categoria = await _context.Categorias
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (categoria == null)
-            {
-                return NotFound();
-            }
+            FirebaseResponse reponse = await firebase.DeleteAsync("Categoria/" + id);
+            Categoria categoria = reponse.ResultAs<Categoria>();
 
-            return View(categoria);
+            return RedirectToAction("Index");
         }
 
-        // POST: Categoria/Delete/5
+        /*// POST: Categoria/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
