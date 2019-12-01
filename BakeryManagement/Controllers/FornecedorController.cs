@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Domain;
 using Repository;
+using FireSharp.Interfaces;
+using FireSharp.Config;
+using FireSharp.Response;
 
 namespace BakeryManagement.Controllers
 {
@@ -14,9 +17,17 @@ namespace BakeryManagement.Controllers
     {
         private readonly FornecedorDAO _fornecedorDAO;
 
+        IFirebaseConfig config = new FirebaseConfig
+        {
+            AuthSecret = "l0mQk1Nwesby4YaQUeUPRm87yiOVFTE0q6RX7nW3",
+            BasePath = "https://trabalho-asp.firebaseio.com/"
+        };
+        IFirebaseClient firebase;
+
         public FornecedorController(FornecedorDAO fornecedorDAO)
         {
             _fornecedorDAO = fornecedorDAO;
+            firebase = new FireSharp.FirebaseClient(config);
         }
 
         // GET: Fornecedor
@@ -31,20 +42,24 @@ namespace BakeryManagement.Controllers
             return View();
         }
         
+
+
+
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Fornecedor fornecedor)
+        public async Task<IActionResult> Create(Fornecedor fornecedor)
         {
-            if (ModelState.IsValid)
-            {
-                if (_fornecedorDAO.Create(fornecedor))
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("", "Esse fornecedor já existe!");
-            }
-            return View(fornecedor);
+            var data = fornecedor;
+
+            SetResponse reponse = await firebase.SetAsync("Fornecedor/" + data.Nome, data);
+            Fornecedor result = reponse.ResultAs<Fornecedor>();
+
+            return RedirectToAction("Index");
         }
+
+
+
+
 
         // GET: Fornecedor/Edit/5
         public IActionResult Edit(int id)

@@ -43,6 +43,9 @@ namespace BakeryManagement.Controllers
             return View();
         }
 
+
+
+
         [HttpPost]
         public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
         {
@@ -53,6 +56,10 @@ namespace BakeryManagement.Controllers
 
             return RedirectToAction("Index");
         }
+
+
+
+
 
         //[HttpPost]
         //[ValidateAntiForgeryToken]

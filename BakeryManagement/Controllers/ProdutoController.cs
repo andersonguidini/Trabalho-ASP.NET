@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Domain;
 using Repository;
+using FireSharp.Interfaces;
+using FireSharp.Config;
 
 namespace BakeryManagement.Controllers
 {
@@ -14,9 +16,17 @@ namespace BakeryManagement.Controllers
     {
         private readonly ProdutoDAO _produtoDAO;
 
+        IFirebaseConfig config = new FirebaseConfig
+        {
+            AuthSecret = "l0mQk1Nwesby4YaQUeUPRm87yiOVFTE0q6RX7nW3",
+            BasePath = "https://trabalho-asp.firebaseio.com/"
+        };
+        IFirebaseClient firebase;
+
         public ProdutoController(ProdutoDAO produto)
         {
             _produtoDAO = produto;
+            firebase = new FireSharp.FirebaseClient(config);
         }
 
         // GET: Produto
@@ -31,18 +41,22 @@ namespace BakeryManagement.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Produto produto)
-        {
-            
-            if (_produtoDAO.Create(produto))
-            {
-                return RedirectToAction("Index");
-            }
-            ModelState.AddModelError("", "Esse produto já existe!");
-            return View(produto);
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
+        //{
+        //    var data = categoria;
+
+        //    SetResponse reponse = await firebase.SetAsync("Categoria/" + data.Nome, data);
+        //    Categoria result = reponse.ResultAs<Categoria>();
+
+        //    return RedirectToAction("Index");
+        //}
+
+
+
+
+
+
 
         public IActionResult Edit(int id)
         {

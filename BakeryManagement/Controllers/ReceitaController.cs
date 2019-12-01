@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Domain;
 using Repository;
+using FireSharp.Interfaces;
+using FireSharp.Config;
+using FireSharp.Response;
+using System.Collections;
 
 namespace BakeryManagement.Controllers
 {
@@ -14,9 +18,17 @@ namespace BakeryManagement.Controllers
     {
         private readonly ReceitaDAO _receitaDAO;
 
+        IFirebaseConfig config = new FirebaseConfig
+        {
+            AuthSecret = "l0mQk1Nwesby4YaQUeUPRm87yiOVFTE0q6RX7nW3",
+            BasePath = "https://trabalho-asp.firebaseio.com/"
+        };
+        IFirebaseClient firebase;
+
         public ReceitaController(ReceitaDAO receitaDAO)
         {
             _receitaDAO = receitaDAO;
+            firebase = new FireSharp.FirebaseClient(config);
         }
 
         // GET: Receita
@@ -32,15 +44,15 @@ namespace BakeryManagement.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Receita receita)
+        public async Task<IActionResult> Create(Receita receita)
         {
-            if (_receitaDAO.Create(receita))
-            {
-                    return RedirectToAction("Index");
-            }
-            ModelState.AddModelError("", "Essa receita já existe!");
-            return View(receita);
+            var data = receita;
+           
+            SetResponse reponse = await firebase.SetAsync("Receita/" + data.Nome, data);
+            
+            Receita result = reponse.ResultAs<Receita>();
+
+            return RedirectToAction("Index");
         }
 
         // GET: Receita/Edit/5

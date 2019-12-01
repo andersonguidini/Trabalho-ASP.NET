@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Domain;
 using Repository;
+using FireSharp.Interfaces;
+using FireSharp.Config;
+using FireSharp.Response;
 
 namespace BakeryManagement.Controllers
 {
@@ -14,9 +17,17 @@ namespace BakeryManagement.Controllers
     {
         private readonly ProdutoFinalDAO _produtoFinalDAO;
 
+        IFirebaseConfig config = new FirebaseConfig
+        {
+            AuthSecret = "l0mQk1Nwesby4YaQUeUPRm87yiOVFTE0q6RX7nW3",
+            BasePath = "https://trabalho-asp.firebaseio.com/"
+        };
+        IFirebaseClient firebase;
+
         public ProdutoFinalController(ProdutoFinalDAO produtoFinalDAO)
         {
             _produtoFinalDAO = produtoFinalDAO;
+            firebase = new FireSharp.FirebaseClient(config);
         }
 
         // GET: ProdutoFinal
@@ -31,18 +42,19 @@ namespace BakeryManagement.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(ProdutoFinal produtoFinal)
-        {
+        //[HttpPost]
+        //public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
+        //{
+        //    var data = categoria;
 
-            if (_produtoFinalDAO.Create(produtoFinal))
-            {
-                return RedirectToAction("Index");
-            }
-            ModelState.AddModelError("", "Esse produto já existe!");
-            return View(produtoFinal);
-        }
+        //    SetResponse reponse = await firebase.SetAsync("Categoria/" + data.Nome, data);
+        //    Categoria result = reponse.ResultAs<Categoria>();
+
+        //    return RedirectToAction("Index");
+        //}
+
+
+
 
         public IActionResult Edit(int id)
         {
