@@ -34,7 +34,30 @@ namespace BakeryManagement.Controllers
         // GET: Categoria
         public IActionResult Index()
         {
-            return View(_categoriaDAO.ListarTodos());
+            List<Categoria> categorias = new List<Categoria>();
+
+            FirebaseResponse reponse = firebase.Get("Categoria/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            int cont = 1;
+
+            while (true)
+            {
+                reponse = firebase.Get("Categoria/"+cont);
+                Categoria categoria = reponse.ResultAs<Categoria>();
+
+                categorias.Add(categoria);
+
+                if (cont == Convert.ToInt32(counter))
+                {
+                    break;
+                }
+                cont = cont + 1;
+            }
+            //FirebaseResponse reponse = firebase.Get("Categoria/");
+            //List<Categoria> categorias = reponse.ResultAs<List<Categoria>>();
+
+            return View(categorias);
         }
 
         // GET: Categoria/Create
@@ -49,10 +72,30 @@ namespace BakeryManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
         {
+            FirebaseResponse reponse = firebase.Get("Categoria/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            SetResponse reponseFirebase;
+            Categoria result;
+
+            if (counter == null)
+            {
+                reponseFirebase = await firebase.SetAsync("Categoria/Counter", "1");
+                result = reponse.ResultAs<Categoria>();
+
+                counter = "0";
+            }
+
+            Int32 intCounter = Convert.ToInt32(counter);
+            intCounter = intCounter + 1;
+
             var data = categoria;
 
-            SetResponse reponse = await firebase.SetAsync("Categoria/"+data.Nome,data);
-            Categoria result = reponse.ResultAs<Categoria>();
+            reponseFirebase = await firebase.SetAsync("Categoria/"+intCounter, data);
+            result = reponseFirebase.ResultAs<Categoria>();
+
+            reponseFirebase = await firebase.SetAsync("Categoria/Counter", Convert.ToString(intCounter));
+            //result = reponse.ResultAs<String>();
 
             return RedirectToAction("Index");
         }
