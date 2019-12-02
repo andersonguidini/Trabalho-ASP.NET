@@ -119,7 +119,7 @@ namespace Repository
             ProdutoFinal produtoFinal = reponse.ResultAs<ProdutoFinal>();
         }
 
-        public async void Edit(ProdutoFinal objeto)
+        public async void Edit(ProdutoFinal pf)
         {
             SetResponse reponseFirebase = await firebase.SetAsync("ProdutoFinal/" + pf.Id, pf);
             ProdutoFinal result = reponseFirebase.ResultAs<ProdutoFinal>();

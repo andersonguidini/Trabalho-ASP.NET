@@ -26,9 +26,7 @@ namespace BakeryManagement.Controllers
         // GET: Receita
         public IActionResult Index()
         {
-           
-
-            return View(receitas);
+            return View();
         }
 
         // GET: Receita/Create
@@ -47,7 +45,7 @@ namespace BakeryManagement.Controllers
 
         public IActionResult Edit(int id)
         {
-            return View(_receitaDAO.BuscarPorId(id););
+            return View(_receitaDAO.BuscarPorId(id));
         }
 
         [HttpPost]

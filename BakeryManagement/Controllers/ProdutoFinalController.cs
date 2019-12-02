@@ -44,7 +44,7 @@ namespace BakeryManagement.Controllers
 
         public IActionResult Edit(int id)
         {
-            return View(_produtoFinalDAO.BuscarPorId(id););
+            return View(_produtoFinalDAO.BuscarPorId(id));
         }
 
         [HttpPost]

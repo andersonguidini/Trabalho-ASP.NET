@@ -119,7 +119,7 @@ namespace Repository
             Receita receita = reponse.ResultAs<Receita>();
         }
 
-        public async void Edit(Receita objeto)
+        public async void Edit(Receita r)
         {
             SetResponse reponseFirebase = await firebase.SetAsync("Receita/" + r.Id, r);
             Receita result = reponseFirebase.ResultAs<Receita>();

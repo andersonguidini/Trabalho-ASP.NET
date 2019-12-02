@@ -25,7 +25,7 @@ namespace BakeryManagement.Controllers
         // GET: Produto
         public IActionResult Index()
         {
-            return View(_produtoDAO.ListarTodos(););
+            return View(_produtoDAO.ListarTodos());
         }
 
         // GET: Produto/Create
@@ -44,7 +44,7 @@ namespace BakeryManagement.Controllers
 
         public IActionResult Edit(int id)
         {
-            return View(_produtoDAO.BuscarPorId(id););
+            return View(_produtoDAO.BuscarPorId(id));
         }
 
         [HttpPost]
