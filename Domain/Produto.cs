@@ -35,5 +35,9 @@ namespace Domain
         [Required(ErrorMessage = "Campo obrigatório!")]
         [Display(Name = "Prazo de validade do produto:")]
         public DateTime PrazoValidade { get; set; }
+
+        [Required(ErrorMessage = "Campo obrigatório!")]
+        [Display(Name = "Fornecedor:")]
+        public Fornecedor Fornecedor { get; set; }
     }
 }

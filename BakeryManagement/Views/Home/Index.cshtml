@@ -1,9 +1,29 @@
 ﻿
-@{
-    ViewData["Title"] = "Index";
-}
+@model List<Produto>
 
-<h2>Boa</h2>
-<h2>Mlk</h2>
-<h2>Bom</h2>
+
+
+
+<h3>Próximos ingredientes à vencer</h3>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Produto</th>
+            <th scope="col">Prazo de Validade</th>
+            <th scope="col">Fornecedor</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Produto item in Model)
+        {
+            <tr>
+                <td>@item.Nome</td>
+                <td>@item.PrazoValidade</td>
+                <td>@item.Preco</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
 
