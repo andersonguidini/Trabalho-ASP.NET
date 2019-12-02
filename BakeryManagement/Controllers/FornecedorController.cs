@@ -17,55 +17,15 @@ namespace BakeryManagement.Controllers
     {
         private readonly FornecedorDAO _fornecedorDAO;
 
-        IFirebaseConfig config = new FirebaseConfig
-        {
-            AuthSecret = "l0mQk1Nwesby4YaQUeUPRm87yiOVFTE0q6RX7nW3",
-            BasePath = "https://trabalho-asp.firebaseio.com/"
-        };
-        IFirebaseClient firebase;
-
         public FornecedorController(FornecedorDAO fornecedorDAO)
         {
             _fornecedorDAO = fornecedorDAO;
-            firebase = new FireSharp.FirebaseClient(config);
         }
 
         // GET: Fornecedor
         public IActionResult Index()
         {
-            List<Fornecedor> fornecedores = new List<Fornecedor>();
-
-            FirebaseResponse reponse = firebase.Get("Fornecedor/Counter");
-            String counter = reponse.ResultAs<String>();
-
-//-------------------------------------------------------------------------------------------------//
-
-            if (counter == null)
-            {
-                counter = "0";
-            }
-
-            int cont = 0;
-
-            while (true)
-            {
-                if (cont == Convert.ToInt32(counter))
-                {
-                    break;
-                }
-                cont = cont + 1;
-
-                reponse = firebase.Get("Fornecedor/" + cont);
-                Fornecedor fornecedor = reponse.ResultAs<Fornecedor>();
-
-                if (fornecedor != null)
-                {
-                    fornecedor.Id = Convert.ToInt32(cont);
-                    fornecedores.Add(fornecedor);
-                }
-            }
-
-            return View(fornecedores);
+            return View(_fornecedorDAO.ListarTodos());
         }
 
         // GET: Fornecedor/Create
@@ -77,37 +37,17 @@ namespace BakeryManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Fornecedor fornecedor, string drpTipo)
         {
-            FirebaseResponse reponse = firebase.Get("Fornecedor/Counter");
-            String counter = reponse.ResultAs<String>();
-
-            SetResponse reponseFirebase;
-            Fornecedor result;
-
-            if (counter == null)
+            if (await _fornecedorDAO.Create(fornecedor))
             {
-                reponseFirebase = await firebase.SetAsync("Fornecedor/Counter", "1");
-                result = reponse.ResultAs<Fornecedor>();
-
-                counter = "0";
+                return RedirectToAction("Index");
             }
-
-            Int32 intCounter = Convert.ToInt32(counter);
-            intCounter = intCounter + 1;
-
-            var data = fornecedor;
-
-            reponseFirebase = await firebase.SetAsync("Fornecedor/" + intCounter, data);
-            result = reponseFirebase.ResultAs<Fornecedor>();
-
-            reponseFirebase = await firebase.SetAsync("Fornecedor/Counter", Convert.ToString(intCounter));
-
-            return RedirectToAction("Index");
+            ModelState.AddModelError("", "O fornecedor já existe");
+            return View();
         }
 
         public IActionResult Edit(int id)
         {
-            FirebaseResponse reponse = firebase.Get("Fornecedor/" + id);
-            Fornecedor fornecedor = reponse.ResultAs<Fornecedor>();
+            Fornecedor fornecedor = _fornecedorDAO.BuscarPorId(id);
 
             return View(fornecedor);
         }
@@ -115,8 +55,7 @@ namespace BakeryManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Fornecedor f)
         {
-            SetResponse reponseFirebase = await firebase.SetAsync("Fornecedor/" + f.Id, f);
-            Fornecedor result = reponseFirebase.ResultAs<Fornecedor>();
+            _fornecedorDAO.Edit(f);
 
             return RedirectToAction("Index");
         }
@@ -128,8 +67,7 @@ namespace BakeryManagement.Controllers
                 return NotFound();
             }
 
-            FirebaseResponse reponse = await firebase.DeleteAsync("Fornecedor/" + id);
-            Fornecedor fornecedor = reponse.ResultAs<Fornecedor>();
+            _fornecedorDAO.Remover(id);
 
             return RedirectToAction("Index");
         }
