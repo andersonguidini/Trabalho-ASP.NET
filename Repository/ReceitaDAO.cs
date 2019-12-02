@@ -25,7 +25,7 @@ namespace Repository
             return _context.Receitas.FirstOrDefault(x => x.Nome.Equals(objeto.Nome));
         }
 
-        public List<Receita> ListarTodos()
+        public  List<Receita> ListarTodos()
         {
             return _context.Receitas.ToList();
         }

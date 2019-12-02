@@ -29,6 +29,6 @@ namespace Domain
 
         [Required(ErrorMessage = "Campo obrigatório!")]
         [Display(Name = "Tempo de preparo da receita:")]
-        public int? TempoDePreparo { get; set; }
+        public int TempoDePreparo { get; set; }
     }
 }

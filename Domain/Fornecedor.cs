@@ -19,8 +19,9 @@ namespace Domain
         [Required(ErrorMessage = "Campo obrigatório!")]
         public string Nome { get; set; }
 
-        [Display(Name = "Produtos do fornecedor:")]
-        [Required(ErrorMessage = "Campo obrigatório!")]
+        //[Display(Name = "Produtos do fornecedor:")]
+        //[Required(ErrorMessage = "Campo obrigatório!")]
+        //Fornecedor não da lista de produtos ao ser cadastrado
         public List<Produto> Produtos { get; set; }
     }
 }

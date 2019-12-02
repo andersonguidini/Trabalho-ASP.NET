@@ -13,9 +13,9 @@ using FireSharp.Response;
 
 namespace BakeryManagement.Controllers
 {
-    public class CategoriaController : Controller
+    public class ProdutoController : Controller
     {
-        private readonly CategoriaDAO _categoriaDAO;
+        private readonly ProdutoDAO _produtoDAO;
 
         IFirebaseConfig config = new FirebaseConfig
         {
@@ -24,19 +24,18 @@ namespace BakeryManagement.Controllers
         };
         IFirebaseClient firebase;
 
-
-        public CategoriaController(CategoriaDAO categoriaDAO)
+        public ProdutoController(ProdutoDAO produto)
         {
-            _categoriaDAO = categoriaDAO;
+            _produtoDAO = produto;
             firebase = new FireSharp.FirebaseClient(config);
         }
 
-        // GET: Categoria
+        // GET: Produto
         public IActionResult Index()
         {
-            List<Categoria> categorias = new List<Categoria>();
+            List<Produto> produtos = new List<Produto>();
 
-            FirebaseResponse reponse = firebase.Get("Categoria/Counter");
+            FirebaseResponse reponse = firebase.Get("Produto/Counter");
             String counter = reponse.ResultAs<String>();
 
             //-------------------------------------------------------------------------------------------------//
@@ -56,38 +55,38 @@ namespace BakeryManagement.Controllers
                 }
                 cont = cont + 1;
 
-                reponse = firebase.Get("Categoria/" + cont);
-                Categoria categoria = reponse.ResultAs<Categoria>();
+                reponse = firebase.Get("Produto/" + cont);
+                Produto produto = reponse.ResultAs<Produto>();
 
-                if (categoria != null)
+                if (produto != null)
                 {
-                    categoria.Id = Convert.ToInt32(cont);
-                    categorias.Add(categoria);
+                    produto.Id = Convert.ToInt32(cont);
+                    produtos.Add(produto);
                 }
             }
 
-            return View(categorias);
+            return View(produtos);
         }
 
-        // GET: Categoria/Create
+        // GET: Produto/Create
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
+        public async Task<IActionResult> Create(Produto produto, string drpTipo)
         {
-            FirebaseResponse reponse = firebase.Get("Categoria/Counter");
+            FirebaseResponse reponse = firebase.Get("Produto/Counter");
             String counter = reponse.ResultAs<String>();
 
             SetResponse reponseFirebase;
-            Categoria result;
+            Produto result;
 
             if (counter == null)
             {
-                reponseFirebase = await firebase.SetAsync("Categoria/Counter", "1");
-                result = reponse.ResultAs<Categoria>();
+                reponseFirebase = await firebase.SetAsync("Produto/Counter", "1");
+                result = reponse.ResultAs<Produto>();
 
                 counter = "0";
             }
@@ -95,29 +94,29 @@ namespace BakeryManagement.Controllers
             Int32 intCounter = Convert.ToInt32(counter);
             intCounter = intCounter + 1;
 
-            var data = categoria;
+            var data = produto;
 
-            reponseFirebase = await firebase.SetAsync("Categoria/" + intCounter, data);
-            result = reponseFirebase.ResultAs<Categoria>();
+            reponseFirebase = await firebase.SetAsync("Produto/" + intCounter, data);
+            result = reponseFirebase.ResultAs<Produto>();
 
-            reponseFirebase = await firebase.SetAsync("Categoria/Counter", Convert.ToString(intCounter));
+            reponseFirebase = await firebase.SetAsync("Produto/Counter", Convert.ToString(intCounter));
 
             return RedirectToAction("Index");
         }
 
         public IActionResult Edit(int id)
         {
-            FirebaseResponse reponse = firebase.Get("Categoria/" + id);
-            Categoria categoria = reponse.ResultAs<Categoria>();
+            FirebaseResponse reponse = firebase.Get("Produto/" + id);
+            Produto produto = reponse.ResultAs<Produto>();
 
-            return View(categoria);
+            return View(produto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Categoria c)
+        public async Task<IActionResult> Edit(Produto p)
         {
-            SetResponse reponseFirebase = await firebase.SetAsync("Categoria/" + c.Id, c);
-            Categoria result = reponseFirebase.ResultAs<Categoria>();
+            SetResponse reponseFirebase = await firebase.SetAsync("Produto/" + p.Id, p);
+            Produto result = reponseFirebase.ResultAs<Produto>();
 
             return RedirectToAction("Index");
         }
@@ -129,8 +128,8 @@ namespace BakeryManagement.Controllers
                 return NotFound();
             }
 
-            FirebaseResponse reponse = await firebase.DeleteAsync("Categoria/" + id);
-            Categoria categoria = reponse.ResultAs<Categoria>();
+            FirebaseResponse reponse = await firebase.DeleteAsync("Produto/" + id);
+            Produto produto = reponse.ResultAs<Produto>();
 
             return RedirectToAction("Index");
         }

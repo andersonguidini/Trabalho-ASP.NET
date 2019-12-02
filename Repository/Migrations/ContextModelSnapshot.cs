@@ -28,8 +28,7 @@ namespace Repository.Migrations
                     b.Property<string>("Nome")
                         .IsRequired();
 
-                    b.Property<string>("Tipo")
-                        .IsRequired();
+                    b.Property<string>("Tipo");
 
                     b.HasKey("Id");
 
@@ -118,8 +117,7 @@ namespace Repository.Migrations
                     b.Property<string>("Rendimento")
                         .IsRequired();
 
-                    b.Property<int?>("TempoDePreparo")
-                        .IsRequired();
+                    b.Property<int>("TempoDePreparo");
 
                     b.HasKey("Id");
 

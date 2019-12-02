@@ -13,9 +13,9 @@ using FireSharp.Response;
 
 namespace BakeryManagement.Controllers
 {
-    public class FornecedorController : Controller
+    public class ProdutoFinalController : Controller
     {
-        private readonly FornecedorDAO _fornecedorDAO;
+        private readonly ProdutoFinalDAO _produtoFinalDAO;
 
         IFirebaseConfig config = new FirebaseConfig
         {
@@ -24,18 +24,18 @@ namespace BakeryManagement.Controllers
         };
         IFirebaseClient firebase;
 
-        public FornecedorController(FornecedorDAO fornecedorDAO)
+        public ProdutoFinalController(ProdutoFinalDAO produtoFinalDAO)
         {
-            _fornecedorDAO = fornecedorDAO;
+            _produtoFinalDAO = produtoFinalDAO;
             firebase = new FireSharp.FirebaseClient(config);
         }
 
-        // GET: Fornecedor
+        // GET: ProdutoFinal
         public IActionResult Index()
         {
-            List<Fornecedor> fornecedores = new List<Fornecedor>();
+            List<ProdutoFinal> produtosFinais = new List<ProdutoFinal>();
 
-            FirebaseResponse reponse = firebase.Get("Fornecedor/Counter");
+            FirebaseResponse reponse = firebase.Get("ProdutoFinal/Counter");
             String counter = reponse.ResultAs<String>();
 
 //-------------------------------------------------------------------------------------------------//
@@ -55,38 +55,38 @@ namespace BakeryManagement.Controllers
                 }
                 cont = cont + 1;
 
-                reponse = firebase.Get("Fornecedor/" + cont);
-                Fornecedor fornecedor = reponse.ResultAs<Fornecedor>();
+                reponse = firebase.Get("ProdutoFinal/" + cont);
+                ProdutoFinal produtoFinal = reponse.ResultAs<ProdutoFinal>();
 
-                if (fornecedor != null)
+                if (produtoFinal != null)
                 {
-                    fornecedor.Id = Convert.ToInt32(cont);
-                    fornecedores.Add(fornecedor);
+                    produtoFinal.Id = Convert.ToInt32(cont);
+                    produtosFinais.Add(produtoFinal);
                 }
             }
 
-            return View(fornecedores);
+            return View(produtosFinais);
         }
 
-        // GET: Fornecedor/Create
+        // GET: ProdutoFinal/Create
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Fornecedor fornecedor, string drpTipo)
+        public async Task<IActionResult> Create(ProdutoFinal produtoFinal, string drpTipo)
         {
-            FirebaseResponse reponse = firebase.Get("Fornecedor/Counter");
+            FirebaseResponse reponse = firebase.Get("ProdutoFinal/Counter");
             String counter = reponse.ResultAs<String>();
 
             SetResponse reponseFirebase;
-            Fornecedor result;
+            ProdutoFinal result;
 
             if (counter == null)
             {
-                reponseFirebase = await firebase.SetAsync("Fornecedor/Counter", "1");
-                result = reponse.ResultAs<Fornecedor>();
+                reponseFirebase = await firebase.SetAsync("ProdutoFinal/Counter", "1");
+                result = reponse.ResultAs<ProdutoFinal>();
 
                 counter = "0";
             }
@@ -94,29 +94,29 @@ namespace BakeryManagement.Controllers
             Int32 intCounter = Convert.ToInt32(counter);
             intCounter = intCounter + 1;
 
-            var data = fornecedor;
+            var data = produtoFinal;
 
-            reponseFirebase = await firebase.SetAsync("Fornecedor/" + intCounter, data);
-            result = reponseFirebase.ResultAs<Fornecedor>();
+            reponseFirebase = await firebase.SetAsync("ProdutoFinal/" + intCounter, data);
+            result = reponseFirebase.ResultAs<ProdutoFinal>();
 
-            reponseFirebase = await firebase.SetAsync("Fornecedor/Counter", Convert.ToString(intCounter));
+            reponseFirebase = await firebase.SetAsync("ProdutoFinal/Counter", Convert.ToString(intCounter));
 
             return RedirectToAction("Index");
         }
 
         public IActionResult Edit(int id)
         {
-            FirebaseResponse reponse = firebase.Get("Fornecedor/" + id);
-            Fornecedor fornecedor = reponse.ResultAs<Fornecedor>();
+            FirebaseResponse reponse = firebase.Get("ProdutoFinal/" + id);
+            ProdutoFinal produtoFinal = reponse.ResultAs<ProdutoFinal>();
 
-            return View(fornecedor);
+            return View(produtoFinal);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Fornecedor f)
+        public async Task<IActionResult> Edit(ProdutoFinal pf)
         {
-            SetResponse reponseFirebase = await firebase.SetAsync("Fornecedor/" + f.Id, f);
-            Fornecedor result = reponseFirebase.ResultAs<Fornecedor>();
+            SetResponse reponseFirebase = await firebase.SetAsync("ProdutoFinal/" + pf.Id, pf);
+            ProdutoFinal result = reponseFirebase.ResultAs<ProdutoFinal>();
 
             return RedirectToAction("Index");
         }
@@ -128,8 +128,8 @@ namespace BakeryManagement.Controllers
                 return NotFound();
             }
 
-            FirebaseResponse reponse = await firebase.DeleteAsync("Fornecedor/" + id);
-            Fornecedor fornecedor = reponse.ResultAs<Fornecedor>();
+            FirebaseResponse reponse = await firebase.DeleteAsync("ProdutoFinal/" + id);
+            ProdutoFinal produtoFinal = reponse.ResultAs<ProdutoFinal>();
 
             return RedirectToAction("Index");
         }

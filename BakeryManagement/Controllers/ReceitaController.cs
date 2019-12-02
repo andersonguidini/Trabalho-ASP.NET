@@ -10,12 +10,13 @@ using Repository;
 using FireSharp.Interfaces;
 using FireSharp.Config;
 using FireSharp.Response;
+using System.Collections;
 
 namespace BakeryManagement.Controllers
 {
-    public class CategoriaController : Controller
+    public class ReceitaController : Controller
     {
-        private readonly CategoriaDAO _categoriaDAO;
+        private readonly ReceitaDAO _receitaDAO;
 
         IFirebaseConfig config = new FirebaseConfig
         {
@@ -24,19 +25,18 @@ namespace BakeryManagement.Controllers
         };
         IFirebaseClient firebase;
 
-
-        public CategoriaController(CategoriaDAO categoriaDAO)
+        public ReceitaController(ReceitaDAO receitaDAO)
         {
-            _categoriaDAO = categoriaDAO;
+            _receitaDAO = receitaDAO;
             firebase = new FireSharp.FirebaseClient(config);
         }
 
-        // GET: Categoria
+        // GET: Receita
         public IActionResult Index()
         {
-            List<Categoria> categorias = new List<Categoria>();
+            List<Receita> receitas = new List<Receita>();
 
-            FirebaseResponse reponse = firebase.Get("Categoria/Counter");
+            FirebaseResponse reponse = firebase.Get("Receita/Counter");
             String counter = reponse.ResultAs<String>();
 
             //-------------------------------------------------------------------------------------------------//
@@ -56,38 +56,38 @@ namespace BakeryManagement.Controllers
                 }
                 cont = cont + 1;
 
-                reponse = firebase.Get("Categoria/" + cont);
-                Categoria categoria = reponse.ResultAs<Categoria>();
+                reponse = firebase.Get("Receita/" + cont);
+                Receita receita = reponse.ResultAs<Receita>();
 
-                if (categoria != null)
+                if (receita != null)
                 {
-                    categoria.Id = Convert.ToInt32(cont);
-                    categorias.Add(categoria);
+                    receita.Id = Convert.ToInt32(cont);
+                    receitas.Add(receita);
                 }
             }
 
-            return View(categorias);
+            return View(receitas);
         }
 
-        // GET: Categoria/Create
+        // GET: Receita/Create
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
+        public async Task<IActionResult> Create(Receita receita, string drpTipo)
         {
-            FirebaseResponse reponse = firebase.Get("Categoria/Counter");
+            FirebaseResponse reponse = firebase.Get("Receita/Counter");
             String counter = reponse.ResultAs<String>();
 
             SetResponse reponseFirebase;
-            Categoria result;
+            Receita result;
 
             if (counter == null)
             {
-                reponseFirebase = await firebase.SetAsync("Categoria/Counter", "1");
-                result = reponse.ResultAs<Categoria>();
+                reponseFirebase = await firebase.SetAsync("Receita/Counter", "1");
+                result = reponse.ResultAs<Receita>();
 
                 counter = "0";
             }
@@ -95,29 +95,29 @@ namespace BakeryManagement.Controllers
             Int32 intCounter = Convert.ToInt32(counter);
             intCounter = intCounter + 1;
 
-            var data = categoria;
+            var data = receita;
 
-            reponseFirebase = await firebase.SetAsync("Categoria/" + intCounter, data);
-            result = reponseFirebase.ResultAs<Categoria>();
+            reponseFirebase = await firebase.SetAsync("Receita/" + intCounter, data);
+            result = reponseFirebase.ResultAs<Receita>();
 
-            reponseFirebase = await firebase.SetAsync("Categoria/Counter", Convert.ToString(intCounter));
+            reponseFirebase = await firebase.SetAsync("Receita/Counter", Convert.ToString(intCounter));
 
             return RedirectToAction("Index");
         }
 
         public IActionResult Edit(int id)
         {
-            FirebaseResponse reponse = firebase.Get("Categoria/" + id);
-            Categoria categoria = reponse.ResultAs<Categoria>();
+            FirebaseResponse reponse = firebase.Get("Receita/" + id);
+            Receita receita = reponse.ResultAs<Receita>();
 
-            return View(categoria);
+            return View(receita);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Categoria c)
+        public async Task<IActionResult> Edit(Receita r)
         {
-            SetResponse reponseFirebase = await firebase.SetAsync("Categoria/" + c.Id, c);
-            Categoria result = reponseFirebase.ResultAs<Categoria>();
+            SetResponse reponseFirebase = await firebase.SetAsync("Receita/" + r.Id, r);
+            Receita result = reponseFirebase.ResultAs<Receita>();
 
             return RedirectToAction("Index");
         }
@@ -129,10 +129,11 @@ namespace BakeryManagement.Controllers
                 return NotFound();
             }
 
-            FirebaseResponse reponse = await firebase.DeleteAsync("Categoria/" + id);
-            Categoria categoria = reponse.ResultAs<Categoria>();
+            FirebaseResponse reponse = await firebase.DeleteAsync("Receita/" + id);
+            Receita receita = reponse.ResultAs<Receita>();
 
             return RedirectToAction("Index");
         }
+
     }
 }

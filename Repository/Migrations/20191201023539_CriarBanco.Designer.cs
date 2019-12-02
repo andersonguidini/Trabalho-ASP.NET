@@ -10,7 +10,7 @@ using Repository;
 namespace Repository.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20191125221156_CriarBanco")]
+    [Migration("20191201023539_CriarBanco")]
     partial class CriarBanco
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,8 +30,7 @@ namespace Repository.Migrations
                     b.Property<string>("Nome")
                         .IsRequired();
 
-                    b.Property<string>("Tipo")
-                        .IsRequired();
+                    b.Property<string>("Tipo");
 
                     b.HasKey("Id");
 
@@ -120,8 +119,7 @@ namespace Repository.Migrations
                     b.Property<string>("Rendimento")
                         .IsRequired();
 
-                    b.Property<int?>("TempoDePreparo")
-                        .IsRequired();
+                    b.Property<int>("TempoDePreparo");
 
                     b.HasKey("Id");
 
