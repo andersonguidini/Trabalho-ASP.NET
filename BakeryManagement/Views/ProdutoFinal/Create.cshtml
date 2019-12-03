@@ -35,6 +35,14 @@
                 <input asp-for="PrazoValidade" class="form-control" />
                 <span asp-validation-for="PrazoValidade" class="text-danger"></span>
             </div>
+            <div class="form-group" id="Receita">
+                <label>Receita</label>
+                <select asp-items="@ViewBag.Receitas"
+                        class="form-control"
+                        name="drpReceita">
+                    <option> -- SELECIONE -- </option>
+                </select>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>

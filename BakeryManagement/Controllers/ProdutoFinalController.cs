@@ -22,26 +22,29 @@ namespace BakeryManagement.Controllers
         {
             _receitaDAO = receitaDAO;
             _produtoFinalDAO = produtoFinalDAO;
+            _receitaDAO = receitaDAO;
         }
 
         // GET: ProdutoFinal
         public IActionResult Index()
         {
+
             return View(_produtoFinalDAO.ListarTodos());
         }
 
         // GET: ProdutoFinal/Create
         public IActionResult Create()
         {
-            ViewBag.Receitas = new SelectList(_receitaDAO.ListarTodos(),
+            ViewBag.Fornecedores = new SelectList(_receitaDAO.ListarTodos(),
                 "Id", "Nome");
+
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProdutoFinal produtoFinal, string drpTipo)
+        public async Task<IActionResult> Create(ProdutoFinal produtoFinal, int drpReceita)
         {
-            produtoFinal.Receita = _receitaDAO.BuscarPorId(Convert.ToInt32(drpTipo));
+            produtoFinal.Receita = _receitaDAO.BuscarPorId(Convert.ToInt32(drpReceita));
             await _produtoFinalDAO.Create(produtoFinal);
 
             return RedirectToAction("Index");

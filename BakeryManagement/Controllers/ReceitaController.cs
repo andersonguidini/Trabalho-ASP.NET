@@ -17,10 +17,12 @@ namespace BakeryManagement.Controllers
     public class ReceitaController : Controller
     {
         private readonly ReceitaDAO _receitaDAO;
+        private readonly ProdutoDAO _produtoDAO;
 
-        public ReceitaController(ReceitaDAO receitaDAO)
+        public ReceitaController(ReceitaDAO receitaDAO, ProdutoDAO produtoDAO)
         {
             _receitaDAO = receitaDAO;
+            _produtoDAO = produtoDAO;
         }
 
         // GET: Receita
@@ -32,15 +34,23 @@ namespace BakeryManagement.Controllers
         // GET: Receita/Create
         public IActionResult Create()
         {
+            ViewBag.Produtos = _produtoDAO.ListarTodos();
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Receita receita, string drpTipo)
+        public async Task<IActionResult> Create(Receita receita, string drpProdutos)
         {
             
 
             return RedirectToAction("Index");
+        }
+
+        public IActionResult AddProduto()
+        {
+
+
+            return View();
         }
 
         public IActionResult Edit(int id)
