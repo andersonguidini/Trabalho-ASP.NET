@@ -1,8 +1,9 @@
 ﻿
 @model List<Produto>
 
-
-
+@{ 
+    List<ProdutoFinal> produtoFinal = ViewBag.ProdutoFinal;
+}
 
 <h3>Próximos ingredientes à vencer</h3>
 <table class="table">
@@ -20,6 +21,27 @@
                 <td>@item.Nome</td>
                 <td>@item.PrazoValidade</td>
                 <td>@item.Preco</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<h3>Saída de produtos</h3>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Prazo de Validade</th>
+            <th scope="col">Preço original</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (ProdutoFinal final in ViewBag.ProdutoFinal)
+        {
+            <tr>
+                <td>@final.Receita.Nome</td>
+                <td>@final.PrazoValidade</td>
+                <td>@final.Preco</td>
             </tr>
         }
     </tbody>

@@ -26,7 +26,7 @@ namespace BakeryManagement.Controllers
         // GET: Receita
         public IActionResult Index()
         {
-            return View();
+            return View(_receitaDAO.ListarTodos());
         }
 
         // GET: Receita/Create

@@ -16,9 +16,11 @@ namespace BakeryManagement.Controllers
     public class ProdutoFinalController : Controller
     {
         private readonly ProdutoFinalDAO _produtoFinalDAO;
+        private readonly ReceitaDAO _receitaDAO;
 
-        public ProdutoFinalController(ProdutoFinalDAO produtoFinalDAO)
+        public ProdutoFinalController(ProdutoFinalDAO produtoFinalDAO, ReceitaDAO receitaDAO)
         {
+            _receitaDAO = receitaDAO;
             _produtoFinalDAO = produtoFinalDAO;
         }
 
@@ -31,13 +33,16 @@ namespace BakeryManagement.Controllers
         // GET: ProdutoFinal/Create
         public IActionResult Create()
         {
+            ViewBag.Receitas = new SelectList(_receitaDAO.ListarTodos(),
+                "Id", "Nome");
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(ProdutoFinal produtoFinal, string drpTipo)
         {
-            
+            produtoFinal.Receita = _receitaDAO.BuscarPorId(Convert.ToInt32(drpTipo));
+            await _produtoFinalDAO.Create(produtoFinal);
 
             return RedirectToAction("Index");
         }
