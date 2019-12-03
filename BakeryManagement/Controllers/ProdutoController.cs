@@ -16,10 +16,12 @@ namespace BakeryManagement.Controllers
     public class ProdutoController : Controller
     {
         private readonly ProdutoDAO _produtoDAO;
+        private readonly FornecedorDAO _fornecedorDAO;
 
-        public ProdutoController(ProdutoDAO produto)
+        public ProdutoController(ProdutoDAO produto, FornecedorDAO fornecedor)
         {
             _produtoDAO = produto;
+            _fornecedorDAO = fornecedor;
         }
 
         // GET: Produto
@@ -31,13 +33,17 @@ namespace BakeryManagement.Controllers
         // GET: Produto/Create
         public IActionResult Create()
         {
+            ViewBag.Fornecedores = new SelectList(_fornecedorDAO.ListarTodos(),
+                "Id", "Nome");
+
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Produto produto, string drpTipo)
+        public async Task<IActionResult> Create(Produto produto, int drpFornecedor)
         {
-            
+            produto.Fornecedor = _fornecedorDAO.BuscarPorId(Convert.ToInt32(drpFornecedor));
+            await _produtoDAO.Create(produto);
 
             return RedirectToAction("Index");
         }
