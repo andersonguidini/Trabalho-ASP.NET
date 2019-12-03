@@ -17,56 +17,15 @@ namespace BakeryManagement.Controllers
     {
         private readonly CategoriaDAO _categoriaDAO;
 
-        IFirebaseConfig config = new FirebaseConfig
-        {
-            AuthSecret = "l0mQk1Nwesby4YaQUeUPRm87yiOVFTE0q6RX7nW3",
-            BasePath = "https://trabalho-asp.firebaseio.com/"
-        };
-        IFirebaseClient firebase;
-
-
         public CategoriaController(CategoriaDAO categoriaDAO)
         {
             _categoriaDAO = categoriaDAO;
-            firebase = new FireSharp.FirebaseClient(config);
         }
 
         // GET: Categoria
         public IActionResult Index()
         {
-            List<Categoria> categorias = new List<Categoria>();
-
-            FirebaseResponse reponse = firebase.Get("Categoria/Counter");
-            String counter = reponse.ResultAs<String>();
-
-            //-------------------------------------------------------------------------------------------------//
-
-            if (counter == null)
-            {
-                counter = "0";
-            }
-
-            int cont = 0;
-
-            while (true)
-            {
-                if (cont == Convert.ToInt32(counter))
-                {
-                    break;
-                }
-                cont = cont + 1;
-
-                reponse = firebase.Get("Categoria/" + cont);
-                Categoria categoria = reponse.ResultAs<Categoria>();
-
-                if (categoria != null)
-                {
-                    categoria.Id = Convert.ToInt32(cont);
-                    categorias.Add(categoria);
-                }
-            }
-
-            return View(categorias);
+            return View(_categoriaDAO.ListarTodos().ToList());
         }
 
         // GET: Categoria/Create
@@ -78,37 +37,17 @@ namespace BakeryManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
         {
-            FirebaseResponse reponse = firebase.Get("Categoria/Counter");
-            String counter = reponse.ResultAs<String>();
-
-            SetResponse reponseFirebase;
-            Categoria result;
-
-            if (counter == null)
+            if(await _categoriaDAO.Create(categoria))
             {
-                reponseFirebase = await firebase.SetAsync("Categoria/Counter", "1");
-                result = reponse.ResultAs<Categoria>();
-
-                counter = "0";
+                return RedirectToAction("Index");
             }
-
-            Int32 intCounter = Convert.ToInt32(counter);
-            intCounter = intCounter + 1;
-
-            var data = categoria;
-
-            reponseFirebase = await firebase.SetAsync("Categoria/" + intCounter, data);
-            result = reponseFirebase.ResultAs<Categoria>();
-
-            reponseFirebase = await firebase.SetAsync("Categoria/Counter", Convert.ToString(intCounter));
-
-            return RedirectToAction("Index");
+            ModelState.AddModelError("", "A categoria já existe");
+            return View();
         }
 
         public IActionResult Edit(int id)
         {
-            FirebaseResponse reponse = firebase.Get("Categoria/" + id);
-            Categoria categoria = reponse.ResultAs<Categoria>();
+            Categoria categoria = _categoriaDAO.BuscarPorId(id);
 
             return View(categoria);
         }
@@ -116,8 +55,7 @@ namespace BakeryManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Categoria c)
         {
-            SetResponse reponseFirebase = await firebase.SetAsync("Categoria/" + c.Id, c);
-            Categoria result = reponseFirebase.ResultAs<Categoria>();
+            _categoriaDAO.Edit(c);
 
             return RedirectToAction("Index");
         }
@@ -129,8 +67,7 @@ namespace BakeryManagement.Controllers
                 return NotFound();
             }
 
-            FirebaseResponse reponse = await firebase.DeleteAsync("Categoria/" + id);
-            Categoria categoria = reponse.ResultAs<Categoria>();
+            _categoriaDAO.Remover(id);
 
             return RedirectToAction("Index");
         }
