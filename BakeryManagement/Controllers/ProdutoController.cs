@@ -50,6 +50,8 @@ namespace BakeryManagement.Controllers
 
         public IActionResult Edit(int id)
         {
+            ViewBag.Fornecedores = new SelectList(_fornecedorDAO.ListarTodos(),
+                "Id", "Nome");
             return View(_produtoDAO.BuscarPorId(id));
         }
 
