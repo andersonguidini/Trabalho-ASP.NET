@@ -12,7 +12,6 @@ namespace Repository
 {
     public class CategoriaDAO : IRepository<Categoria>
     {
-        private readonly Context _context;
         IFirebaseConfig config = new FirebaseConfig
         {
             AuthSecret = "l0mQk1Nwesby4YaQUeUPRm87yiOVFTE0q6RX7nW3",
@@ -69,7 +68,7 @@ namespace Repository
                 }
                 cont = cont + 1;
 
-                reponse = firebase.Get("Fornecedor/" + cont);
+                reponse = firebase.Get("Categoria/" + cont);
                 Categoria categoria = reponse.ResultAs<Categoria>();
 
                 if (categoria != null)
