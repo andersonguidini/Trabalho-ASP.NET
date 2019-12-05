@@ -16,13 +16,18 @@
     </thead>
     <tbody>
         @foreach (Produto item in Model)
-        {
-            <tr>
-                <td>@item.Nome</td>
-                <td>@item.PrazoValidade</td>
-                <td>@item.Fornecedor.Nome</td>
-            </tr>
-        }
+         {
+            
+            if (item.PrazoValidade >= DateTime.Now.AddDays(7))
+            {
+               <tr>
+                   <td>@item.Nome</td>
+                   <td>@item.PrazoValidade</td>
+                   <td>@item.Fornecedor.Nome</td>
+               </tr>
+            }
+            
+         }
     </tbody>
 </table>
 <br />
