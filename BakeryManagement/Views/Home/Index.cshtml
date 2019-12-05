@@ -38,17 +38,31 @@
             <th scope="col">Nome</th>
             <th scope="col">Prazo de Validade</th>
             <th scope="col">Preço original</th>
+            <th scope="col">Desconto</th>
         </tr>
     </thead>
     <tbody>
         @foreach (ProdutoFinal final in ViewBag.ProdutoFinal)
-        {
+         {
+         double? promocao = 0;
+         double? precoOriginal = 0;
+
+            if (final.PrazoValidade >= DateTime.Now.AddDays(5))
+            {
+                precoOriginal = final.Preco;
+                promocao = precoOriginal - (precoOriginal * 0.3);
+            }
+            else
+            {
+                promocao = 0;
+            }
             <tr>
                 <td>@final.Receita.Nome</td>
                 <td>@final.PrazoValidade</td>
                 <td>@final.Preco</td>
-            </tr>
-        }
+                <td>@promocao</td>
+            </tr>      
+         }
     </tbody>
 </table>
 
