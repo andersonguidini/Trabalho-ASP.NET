@@ -20,6 +20,7 @@ namespace BakeryManagement.Controllers
 
         public ProdutoFinalController(ProdutoFinalDAO produtoFinalDAO, ReceitaDAO receitaDAO)
         {
+            _receitaDAO = receitaDAO;
             _produtoFinalDAO = produtoFinalDAO;
             _receitaDAO = receitaDAO;
         }

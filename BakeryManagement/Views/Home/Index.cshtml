@@ -1,8 +1,9 @@
 ﻿
 @model List<Produto>
 
-
-
+@{ 
+    List<ProdutoFinal> produtoFinal = ViewBag.ProdutoFinal;
+}
 
 <h3>Próximos ingredientes à vencer</h3>
 <table class="table">
@@ -15,13 +16,53 @@
     </thead>
     <tbody>
         @foreach (Produto item in Model)
-        {
+         {
+            
+            if (item.PrazoValidade >= DateTime.Now.AddDays(7))
+            {
+               <tr>
+                   <td>@item.Nome</td>
+                   <td>@item.PrazoValidade</td>
+                   <td>@item.Fornecedor.Nome</td>
+               </tr>
+            }
+            
+         }
+    </tbody>
+</table>
+<br />
+<h3>Saída de produtos</h3>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Prazo de Validade</th>
+            <th scope="col">Preço original</th>
+            <th scope="col">Desconto</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (ProdutoFinal final in ViewBag.ProdutoFinal)
+         {
+         double? promocao = 0;
+         double? precoOriginal = 0;
+
+            if (final.PrazoValidade >= DateTime.Now.AddDays(5))
+            {
+                precoOriginal = final.Preco;
+                promocao = precoOriginal - (precoOriginal * 0.3);
+            }
+            else
+            {
+                promocao = 0;
+            }
             <tr>
-                <td>@item.Nome</td>
-                <td>@item.PrazoValidade</td>
-                <td>@item.Preco</td>
-            </tr>
-        }
+                <td>@final.Receita.Nome</td>
+                <td>@final.PrazoValidade</td>
+                <td>@final.Preco</td>
+                <td>@promocao</td>
+            </tr>      
+         }
     </tbody>
 </table>
 

@@ -29,7 +29,10 @@ namespace API
             services.AddDbContext<Context>(options => options.UseSqlServer
                 (Configuration.GetConnectionString("BakeryConnection")));
 
-            services.AddScoped<CategoriaDAO>();
+            services.AddScoped<FornecedorDAO>();
+            services.AddScoped<ProdutoFinalDAO>();
+            services.AddScoped<ReceitaDAO>();
+            
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
