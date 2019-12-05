@@ -124,5 +124,66 @@ namespace Repository
             SetResponse reponseFirebase = await firebase.SetAsync("Receita/" + r.Id, r);
             Receita result = reponseFirebase.ResultAs<Receita>();
         }
+
+        public async void AddIngrediente(Receita r, Produto p)
+        {
+            FirebaseResponse reponse = firebase.Get("Receita/"+r.Id+"/Produto/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            SetResponse reponseFirebase;
+            Receita result;
+
+            if (counter == null)
+            {
+                reponseFirebase = await firebase.SetAsync("Receita/"+r.Id+"/Produto/Counter", "1");
+                result = reponse.ResultAs<Receita>();
+
+                counter = "0";
+            }
+
+            Int32 intCounter = Convert.ToInt32(counter);
+            intCounter = intCounter + 1;
+
+            var data = p;
+
+            reponseFirebase = await firebase.SetAsync("Receita/" + r.Id + "/Produto/" + intCounter, data);
+            result = reponseFirebase.ResultAs<Receita>();
+
+        }
+
+        public List<Produto> BuscarIngredientes(Receita r)
+        {
+            List<Produto> produtos = new List<Produto>();
+
+            FirebaseResponse reponse = firebase.Get("Receita/"+r.Id+"/Produto/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            if (counter == null)
+            {
+                counter = "0";
+            }
+
+            int cont = 0;
+
+            while (true)
+            {
+                if (cont == Convert.ToInt32(counter))
+                {
+                    break;
+                }
+                cont = cont + 1;
+
+                reponse = firebase.Get("Receita/"+r.Id+"/Produto/" + cont);
+                Produto produto = reponse.ResultAs<Produto>();
+
+                if (produto != null)
+                {
+                    produto.Id = Convert.ToInt32(cont);
+                    produtos.Add(produto);
+                }
+            }
+
+            return produtos;
+        }
     }
 }

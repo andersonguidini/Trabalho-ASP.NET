@@ -1,0 +1,114 @@
+﻿@model IEnumerable<Domain.Produto>
+
+@{
+    ViewData["Title"] = "AddIngredientes";
+}
+
+<h2>AddIngredientes</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<div class="row">
+    <div class="col-12 col-sm-6">
+        <h2>Ingredientes</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Nome)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Preco)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Quantidade)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Unidade)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PrazoValidade)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewBag.Produtos)
+                {
+                    <tr>
+                        <td>
+                            @item.Nome
+                        </td>
+                        <td>
+                            @item.Preco
+                        </td>
+                        <td>
+                            @item.Quantidade
+                        </td>
+                        <td>
+                            @item.Unidade
+                        </td>
+                        <td>
+                            @item.PrazoValidade
+                        </td>
+                        <td>
+                            <a asp-action="DeleteIngrediente" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-12 col-sm-6">
+        <h2>Produtos</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Nome)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Preco)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Quantidade)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Unidade)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PrazoValidade)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Nome)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Preco)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantidade)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Unidade)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PrazoValidade)
+                        </td>
+                        <td>
+                            <a asp-action="AddIngrediente" asp-route-id="@item.Id">Adicionar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

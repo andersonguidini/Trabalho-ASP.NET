@@ -34,23 +34,44 @@ namespace BakeryManagement.Controllers
         // GET: Receita/Create
         public IActionResult Create()
         {
-            ViewBag.Produtos = _produtoDAO.ListarTodos();
+            
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Receita receita, string drpProdutos)
         {
-            
+            await _receitaDAO.Create(receita);
+            TempData["Receita"] = receita.Nome;
 
-            return RedirectToAction("Index");
+            return RedirectToAction("AddIngredientes");
         }
 
-        public IActionResult AddProduto()
+        public IActionResult AddIngredientes(Receita r)
         {
+            if(r.Id != 0)
+            {
+                TempData["Receita"] = r.Nome;
 
+                ViewBag.Produtos = _receitaDAO.BuscarIngredientes(r);
+            } else
+            {
+                ViewBag.Produtos = new List<Produto>();
+            }
+            return View(_produtoDAO.ListarTodos());
+        }
 
-            return View();
+        public IActionResult AddIngrediente(Produto p)
+        {
+            string nomeReceita = TempData["Receita"].ToString();
+
+            Produto produto = _produtoDAO.BuscarPorId(p.Id);
+            Receita receita = _receitaDAO.BuscarPorNome(new Receita { Nome = nomeReceita });
+            _receitaDAO.AddIngrediente(receita, produto);
+
+            TempData["Receita"] = receita.Nome;
+
+            return RedirectToAction(nameof(AddIngredientes));
         }
 
         public IActionResult Edit(int id)
