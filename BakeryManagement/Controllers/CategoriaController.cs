@@ -35,13 +35,16 @@ namespace BakeryManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Categoria categoria, string drpTipo)
+        public async Task<IActionResult> Create(Categoria categoria)
         {
-            if(await _categoriaDAO.Create(categoria))
+            if (ModelState.IsValid)
             {
-                return RedirectToAction("Index");
+                if (await _categoriaDAO.Create(categoria))
+                {
+                    return RedirectToAction("Index");
+                }
+                ModelState.AddModelError("", "A categoria já existe");
             }
-            ModelState.AddModelError("", "A categoria já existe");
             return View();
         }
 

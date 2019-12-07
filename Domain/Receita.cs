@@ -30,5 +30,9 @@ namespace Domain
         [Required(ErrorMessage = "Campo obrigatório!")]
         [Display(Name = "Tempo de preparo da receita:")]
         public int TempoDePreparo { get; set; }
+
+        [Required(ErrorMessage = "Campo obrigatório!")]
+        [Display(Name = "Categoria da receita")]
+        public Categoria Categoria { get; set; }
     }
 }

@@ -46,6 +46,20 @@ namespace Repository
             return null;
         }
 
+        public Receita ListarPorCategoria(int? id)
+        {
+            List<Receita> receitas = ListarTodos();
+
+            foreach (Receita receita in receitas)
+            {
+                if (receita.Categoria.Equals(id))
+                {
+                    return receita;
+                }
+            }
+            return null;
+        }
+
         public  List<Receita> ListarTodos()
         {
             List<Receita> receitas = new List<Receita>();
