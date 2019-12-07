@@ -19,16 +19,10 @@
                         @Html.DisplayNameFor(model => model.Nome)
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Preco)
-                    </th>
-                    <th>
                         @Html.DisplayNameFor(model => model.Quantidade)
                     </th>
                     <th>
                         @Html.DisplayNameFor(model => model.Unidade)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.PrazoValidade)
                     </th>
                     <th></th>
                 </tr>
@@ -41,16 +35,10 @@
                             @item.Nome
                         </td>
                         <td>
-                            @item.Preco
-                        </td>
-                        <td>
                             @item.Quantidade
                         </td>
                         <td>
                             @item.Unidade
-                        </td>
-                        <td>
-                            @item.PrazoValidade
                         </td>
                         <td>
                             <a asp-action="DeleteIngrediente" asp-route-id="@item.Id">Delete</a>
@@ -103,7 +91,14 @@
                             @Html.DisplayFor(modelItem => item.PrazoValidade)
                         </td>
                         <td>
-                            <a asp-action="AddIngrediente" asp-route-id="@item.Id">Adicionar</a>
+                            <form asp-action="AddIngrediente" style="display: flex;">
+                                <div>
+                                    <label style="width: 100%;margin: 0px;">Quantidade</label>
+                                    <input type="number" asp-route-qtd="@item.Quantidade" name="qtd" />
+                                </div>
+                                <input type="submit" asp-action="AddIngrediente" asp-route-id="@item.Id" value="Adicionar" />
+                            </form>
+                            @*<a asp-action="AddIngrediente" asp-route-id="@item.Id">Adicionar</a>*@
                         </td>
                     </tr>
                 }

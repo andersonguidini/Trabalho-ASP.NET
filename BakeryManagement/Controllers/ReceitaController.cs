@@ -62,15 +62,36 @@ namespace BakeryManagement.Controllers
             return View(_produtoDAO.ListarTodos());
         }
 
-        public IActionResult AddIngrediente(Produto p)
+        public IActionResult AddIngrediente(Produto p, int qtd)
         {
             string nomeReceita = TempData["Receita"].ToString();
 
             Produto produto = _produtoDAO.BuscarPorId(p.Id);
+            produto.Quantidade = qtd;
             Receita receita = _receitaDAO.BuscarPorNome(new Receita { Nome = nomeReceita });
             _receitaDAO.AddIngrediente(receita, produto);
 
             TempData["Receita"] = receita.Nome;
+
+            ViewBag.Produtos = _receitaDAO.BuscarIngredientes(receita);
+
+            return View("AddIngredientes", _produtoDAO.ListarTodos());
+        }
+
+        public IActionResult DeleteIngrediente(Produto p)
+        {
+            if (p.Id == 0)
+            {
+                return NotFound();
+            }
+
+            string nomeReceita = TempData["Receita"].ToString();
+
+            Receita receita = _receitaDAO.BuscarPorNome(new Receita { Nome = nomeReceita });
+
+            TempData["Receita"] = receita.Nome;
+
+            _receitaDAO.RemoverIngrediente(receita,p);
 
             ViewBag.Produtos = _receitaDAO.BuscarIngredientes(receita);
 
