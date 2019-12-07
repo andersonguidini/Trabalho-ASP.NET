@@ -44,13 +44,14 @@ namespace BakeryManagement.Controllers
             await _receitaDAO.Create(receita);
             TempData["Receita"] = receita.Nome;
 
-            return RedirectToAction("AddIngredientes");
+            return RedirectToAction(nameof(AddIngredientes));
         }
 
         public IActionResult AddIngredientes(Receita r)
         {
             if(r.Id != 0)
             {
+                r = _receitaDAO.BuscarPorId(r.Id);
                 TempData["Receita"] = r.Nome;
 
                 ViewBag.Produtos = _receitaDAO.BuscarIngredientes(r);
@@ -71,7 +72,9 @@ namespace BakeryManagement.Controllers
 
             TempData["Receita"] = receita.Nome;
 
-            return RedirectToAction(nameof(AddIngredientes));
+            ViewBag.Produtos = _receitaDAO.BuscarIngredientes(receita);
+
+            return View("AddIngredientes", _produtoDAO.ListarTodos());
         }
 
         public IActionResult Edit(int id)

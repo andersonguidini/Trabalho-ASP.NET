@@ -26,8 +26,11 @@ namespace Repository
 
         public Receita BuscarPorId(int id)
         {
+            int idReceita = id;
             FirebaseResponse reponse = firebase.Get("Receita/" + id);
             Receita receita = reponse.ResultAs<Receita>();
+
+            receita.Id = idReceita;
 
             return receita;
         }
@@ -148,6 +151,7 @@ namespace Repository
 
             reponseFirebase = await firebase.SetAsync("Receita/" + r.Id + "/Produto/" + intCounter, data);
             result = reponseFirebase.ResultAs<Receita>();
+            reponseFirebase = await firebase.SetAsync("Receita/" + r.Id + "/Produto/Counter", intCounter);
 
         }
 
