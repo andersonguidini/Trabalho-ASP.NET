@@ -130,6 +130,12 @@ namespace Repository
             return false;
         }
 
+        public async void RemoverIngrediente(Receita r, Produto p)
+        {
+            FirebaseResponse reponse = await firebase.DeleteAsync("Receita/" + r.Id + "/Produto/" + p.Id);
+            Produto produto = reponse.ResultAs<Produto>();
+        }
+
         public async void Remover(int? id)
         {
             FirebaseResponse reponse = await firebase.DeleteAsync("Receita/" + id);
