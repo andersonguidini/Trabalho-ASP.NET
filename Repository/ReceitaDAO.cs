@@ -134,7 +134,7 @@ namespace Repository
             Receita result = reponseFirebase.ResultAs<Receita>();
         }
 
-        public async void AddIngrediente(Receita r, Produto p)
+        public async Task AddIngrediente(Receita r, Produto p)
         {
             FirebaseResponse reponse = firebase.Get("Receita/"+r.Id+"/Produto/Counter");
             String counter = reponse.ResultAs<String>();

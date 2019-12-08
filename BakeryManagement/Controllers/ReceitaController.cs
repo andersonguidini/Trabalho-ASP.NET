@@ -42,9 +42,10 @@ namespace BakeryManagement.Controllers
         public async Task<IActionResult> Create(Receita receita, string drpProdutos)
         {
             await _receitaDAO.Create(receita);
-            TempData["Receita"] = receita.Nome;
+            receita = _receitaDAO.BuscarPorNome(receita);
+            TempData["Receita"] = receita.Id;
 
-            return RedirectToAction(nameof(AddIngredientes));
+            return RedirectToAction(nameof(AddIngredientes),receita);
         }
 
         public IActionResult AddIngredientes(Receita r)
@@ -52,7 +53,7 @@ namespace BakeryManagement.Controllers
             if(r.Id != 0)
             {
                 r = _receitaDAO.BuscarPorId(r.Id);
-                TempData["Receita"] = r.Nome;
+                TempData["Receita"] = r.Id;
 
                 ViewBag.Produtos = _receitaDAO.BuscarIngredientes(r);
             } else
@@ -62,16 +63,18 @@ namespace BakeryManagement.Controllers
             return View(_produtoDAO.ListarTodos());
         }
 
-        public IActionResult AddIngrediente(Produto p, int qtd)
+        public async Task<IActionResult> AddIngrediente(Produto p, int qtd)
         {
-            string nomeReceita = TempData["Receita"].ToString();
+            int idReceita = Convert.ToInt32(TempData["Receita"]);
 
             Produto produto = _produtoDAO.BuscarPorId(p.Id);
+            produto.Quantidade = produto.Quantidade - qtd;
+            _produtoDAO.Edit(produto);
             produto.Quantidade = qtd;
-            Receita receita = _receitaDAO.BuscarPorNome(new Receita { Nome = nomeReceita });
-            _receitaDAO.AddIngrediente(receita, produto);
+            Receita receita = _receitaDAO.BuscarPorId(idReceita);
+            await _receitaDAO.AddIngrediente(receita, produto);
 
-            TempData["Receita"] = receita.Nome;
+            TempData["Receita"] = receita.Id;
 
             ViewBag.Produtos = _receitaDAO.BuscarIngredientes(receita);
 
@@ -85,11 +88,11 @@ namespace BakeryManagement.Controllers
                 return NotFound();
             }
 
-            string nomeReceita = TempData["Receita"].ToString();
+            int idReceita = Convert.ToInt32(TempData["Receita"]);
 
-            Receita receita = _receitaDAO.BuscarPorNome(new Receita { Nome = nomeReceita });
+            Receita receita = _receitaDAO.BuscarPorId(idReceita);
 
-            TempData["Receita"] = receita.Nome;
+            TempData["Receita"] = receita.Id;
 
             _receitaDAO.RemoverIngrediente(receita,p);
 

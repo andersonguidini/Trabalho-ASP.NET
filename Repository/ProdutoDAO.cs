@@ -29,6 +29,8 @@ namespace Repository
             FirebaseResponse reponse = firebase.Get("Produto/" + id);
             Produto produto = reponse.ResultAs<Produto>();
 
+            produto.Id = id;
+
             return produto;
         }
 
