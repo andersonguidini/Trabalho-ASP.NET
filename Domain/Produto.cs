@@ -24,9 +24,9 @@ namespace Domain
         public double? Preco { get; set; }
 
         [Required(ErrorMessage = "Campo obrigatório!")]
-        [Range(1, 1000, ErrorMessage = "Quantidade apenas entre 1 e 1000!")]
+        //[Range(1.0, 1000.0, ErrorMessage = "Quantidade apenas entre 1 e 1000!")]
         [Display(Name = "Quantidade do produto:")]
-        public int? Quantidade { get; set; }
+        public float? Quantidade { get; set; }
 
         [Required(ErrorMessage = "Campo obrigatório!")]
         [Display(Name = "Unidade de medida do produto:")]

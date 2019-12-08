@@ -56,14 +56,14 @@ namespace BakeryManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Produto p)
+        public IActionResult Edit(Produto p)
         {
             _produtoDAO.Edit(p);
 
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {

@@ -10,7 +10,7 @@
     <a asp-action="Create">Create New</a>
 </p>
 <div class="row">
-    <div class="col-12 col-sm-6">
+    <div class="col-12 col-sm-5">
         <h2>Ingredientes</h2>
         <table class="table">
             <thead>
@@ -48,7 +48,7 @@
             </tbody>
         </table>
     </div>
-    <div class="col-12 col-sm-6">
+    <div class="col-12 col-sm-7">
         <h2>Produtos</h2>
         <table class="table">
             <thead>
@@ -88,7 +88,7 @@
                             <form asp-action="AddIngrediente" style="display: flex;">
                                 <div>
                                     <label style="width: 100%;margin: 0px;">Quantidade</label>
-                                    <input type="number" asp-route-qtd="@item.Quantidade" name="qtd" />
+                                    <input type="text" asp-route-qtd="@item.Quantidade" name="qtd" />
                                 </div>
                                 <input type="submit" asp-action="AddIngrediente" asp-route-id="@item.Id" value="Adicionar" />
                             </form>

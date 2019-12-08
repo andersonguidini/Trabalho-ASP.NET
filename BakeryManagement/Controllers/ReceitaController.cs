@@ -72,7 +72,7 @@ namespace BakeryManagement.Controllers
             return View(_produtoDAO.ListarTodos());
         }
 
-        public async Task<IActionResult> AddIngrediente(Produto p, int qtd)
+        public async Task<IActionResult> AddIngrediente(Produto p, float qtd)
         {
             int idReceita = Convert.ToInt32(TempData["Receita"]);
 
