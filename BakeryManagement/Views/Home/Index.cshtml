@@ -18,7 +18,7 @@
         @foreach (Produto item in Model)
          {
             
-            if (item.PrazoValidade >= DateTime.Now.AddDays(7))
+            if (item.PrazoValidade < DateTime.Now.AddDays(7))
             {
                <tr>
                    <td>@item.Nome</td>
@@ -38,7 +38,7 @@
             <th scope="col">Nome</th>
             <th scope="col">Prazo de Validade</th>
             <th scope="col">Preço original</th>
-            <th scope="col">Desconto</th>
+            <th scope="col">Preço com Desconto</th>
         </tr>
     </thead>
     <tbody>
@@ -47,10 +47,10 @@
          double? promocao = 0;
          double? precoOriginal = 0;
 
-            if (final.PrazoValidade >= DateTime.Now.AddDays(5))
+            if (final.PrazoValidade < DateTime.Now.AddDays(7))
             {
                 precoOriginal = final.Preco;
-                promocao = precoOriginal - (precoOriginal * 0.3);
+                promocao = precoOriginal - (precoOriginal * 0.25);
             }
             else
             {

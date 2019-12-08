@@ -18,29 +18,38 @@ namespace BakeryManagement.Controllers
     {
         private readonly ReceitaDAO _receitaDAO;
         private readonly ProdutoDAO _produtoDAO;
+        private readonly CategoriaDAO _categoriaDAO;
 
-        public ReceitaController(ReceitaDAO receitaDAO, ProdutoDAO produtoDAO)
+        public ReceitaController(ReceitaDAO receitaDAO, ProdutoDAO produtoDAO, CategoriaDAO categoriaDAO)
         {
             _receitaDAO = receitaDAO;
             _produtoDAO = produtoDAO;
+            _categoriaDAO = categoriaDAO;
         }
 
         // GET: Receita
-        public IActionResult Index()
+        public IActionResult Index(int? id)
         {
-            return View(_receitaDAO.ListarTodos());
+            ViewBag.Categorias = _categoriaDAO.ListarTodos();
+            if (id == null)
+            {
+                return View(_receitaDAO.ListarTodos());
+            }
+            return View(_receitaDAO.ListarPorCategoria(id));
         }
 
         // GET: Receita/Create
         public IActionResult Create()
         {
-            
+            ViewBag.Categorias = new SelectList(_categoriaDAO.ListarTodos(),
+                "Id", "Nome");
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Receita receita, string drpProdutos)
+        public async Task<IActionResult> Create(Receita receita, int drpCategoria)
         {
+            receita.Categoria = _categoriaDAO.BuscarPorId(Convert.ToInt32(drpCategoria));
             await _receitaDAO.Create(receita);
             receita = _receitaDAO.BuscarPorNome(receita);
             TempData["Receita"] = receita.Id;

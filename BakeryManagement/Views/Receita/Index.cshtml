@@ -6,6 +6,19 @@
 
 <h2>Index</h2>
 
+<div id="Categorias">
+    <ul class="pagination pagination-lg justify-content-center" style="margin:20px 0">
+        @foreach (Categoria item in ViewBag.Categorias)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-controller="Receita" asp-route-id="@item.Id">
+                    @item.Nome
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
