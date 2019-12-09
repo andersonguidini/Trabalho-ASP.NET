@@ -22,12 +22,12 @@ namespace Domain
 
         [Required(ErrorMessage = "Campo obrigatório!")]
         [Display(Name = "Preço do produto final:")]
-        public double? Preco { get; set; }
+        public float? Preco { get; set; }
 
 
         [Required(ErrorMessage = "Campo obrigatório!")]
         [Display(Name = "Custo do produto final:")]
-        public double? Custo { get; set; }
+        public float? Custo { get; set; }
 
         [Required(ErrorMessage = "Campo obrigatório!")]
         [Display(Name = "Prazo de validade do produto:")]

@@ -21,7 +21,7 @@ namespace Domain
 
         [Required(ErrorMessage = "Campo obrigatório!")]
         [Display(Name = "Preço do produto:")]
-        public double? Preco { get; set; }
+        public float? Preco { get; set; }
 
         [Required(ErrorMessage = "Campo obrigatório!")]
         //[Range(1.0, 1000.0, ErrorMessage = "Quantidade apenas entre 1 e 1000!")]
