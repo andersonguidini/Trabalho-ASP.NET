@@ -26,8 +26,10 @@ namespace Repository
 
         public Produto BuscarPorId(int id)
         {
-            FirebaseResponse reponse = firebase.Get("Produto/" + id);
-            Produto produto = reponse.ResultAs<Produto>();
+            FirebaseResponse response = firebase.Get("Produto/" + id);
+            Produto produto = response.ResultAs<Produto>();
+            response = firebase.Get("Produto/" + id + "/Fornecedor");
+            produto.Fornecedor = response.ResultAs<Fornecedor>();
 
             produto.Id = id;
 

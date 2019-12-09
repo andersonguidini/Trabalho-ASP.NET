@@ -56,8 +56,9 @@ namespace BakeryManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Produto p)
+        public IActionResult Edit(Produto p, int drpFornecedor)
         {
+            p.Fornecedor = _fornecedorDAO.BuscarPorId(Convert.ToInt32(drpFornecedor));
             _produtoDAO.Edit(p);
 
             return RedirectToAction("Index");
