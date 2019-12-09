@@ -58,8 +58,9 @@ namespace BakeryManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(ProdutoFinal pf)
+        public async Task<IActionResult> Edit(ProdutoFinal pf, int drpReceita)
         {
+            pf.Receita = _receitaDAO.BuscarPorId(Convert.ToInt32(drpReceita));
             _produtoFinalDAO.Edit(pf);
 
             return RedirectToAction("Index");
