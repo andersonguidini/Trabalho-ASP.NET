@@ -17,7 +17,14 @@
                 <select asp-items="@ViewBag.Categorias"
                         class="form-control"
                         name="drpCategoria">
-                    <option> -- SELECIONE -- </option>
+                    @if (Model.Categoria != null)
+                    {
+                        <option> @Model.Categoria.Nome </option>
+                    }
+                    else
+                    {
+                        <option> -- SELECIONE -- </option>
+                    }
                 </select>
             </div>
             <input type="hidden" asp-for="Id" />
