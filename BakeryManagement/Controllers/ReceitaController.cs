@@ -51,18 +51,16 @@ namespace BakeryManagement.Controllers
         {
             receita.Categoria = _categoriaDAO.BuscarPorId(Convert.ToInt32(drpCategoria));
             await _receitaDAO.Create(receita);
-            receita = _receitaDAO.BuscarPorNome(receita);
-            TempData["Receita"] = receita.Id;
+            TempData["Receita"] = receita.Nome;
 
-            return RedirectToAction(nameof(AddIngredientes),receita);
+            return RedirectToAction("AddIngredientes");
         }
 
         public IActionResult AddIngredientes(Receita r)
         {
             if(r.Id != 0)
             {
-                r = _receitaDAO.BuscarPorId(r.Id);
-                TempData["Receita"] = r.Id;
+                TempData["Receita"] = r.Nome;
 
                 ViewBag.Produtos = _receitaDAO.BuscarIngredientes(r);
             } else
@@ -72,46 +70,23 @@ namespace BakeryManagement.Controllers
             return View(_produtoDAO.ListarTodos());
         }
 
-        public async Task<IActionResult> AddIngrediente(Produto p, float qtd)
+        public IActionResult AddIngrediente(Produto p)
         {
-            int idReceita = Convert.ToInt32(TempData["Receita"]);
+            string nomeReceita = TempData["Receita"].ToString();
 
             Produto produto = _produtoDAO.BuscarPorId(p.Id);
-            produto.Quantidade = produto.Quantidade - qtd;
-            _produtoDAO.Edit(produto);
-            produto.Quantidade = qtd;
-            Receita receita = _receitaDAO.BuscarPorId(idReceita);
-            await _receitaDAO.AddIngrediente(receita, produto);
+            Receita receita = _receitaDAO.BuscarPorNome(new Receita { Nome = nomeReceita });
+            _receitaDAO.AddIngrediente(receita, produto);
 
-            TempData["Receita"] = receita.Id;
+            TempData["Receita"] = receita.Nome;
 
-            ViewBag.Produtos = _receitaDAO.BuscarIngredientes(receita);
-
-            return View("AddIngredientes", _produtoDAO.ListarTodos());
-        }
-
-        public IActionResult DeleteIngrediente(Produto p)
-        {
-            if (p.Id == 0)
-            {
-                return NotFound();
-            }
-
-            int idReceita = Convert.ToInt32(TempData["Receita"]);
-
-            Receita receita = _receitaDAO.BuscarPorId(idReceita);
-
-            TempData["Receita"] = receita.Id;
-
-            _receitaDAO.RemoverIngrediente(receita,p);
-
-            ViewBag.Produtos = _receitaDAO.BuscarIngredientes(receita);
-
-            return View("AddIngredientes", _produtoDAO.ListarTodos());
+            return RedirectToAction(nameof(AddIngredientes));
         }
 
         public IActionResult Edit(int id)
         {
+            ViewBag.Categorias = new SelectList(_categoriaDAO.ListarTodos(),
+                "Id", "Nome");
             return View(_receitaDAO.BuscarPorId(id));
         }
 

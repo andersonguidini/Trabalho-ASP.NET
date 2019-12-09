@@ -49,18 +49,40 @@ namespace Repository
             return null;
         }
 
-        public Receita ListarPorCategoria(int? id)
+        public List<Receita> ListarPorCategoria(int? id)
         {
-            List<Receita> receitas = ListarTodos();
+            List<Receita> receitas = new List<Receita>();
 
-            foreach (Receita receita in receitas)
+            FirebaseResponse reponse = firebase.Get("Receita/Counter");
+            String counter = reponse.ResultAs<String>();
+
+            if (counter == null)
             {
-                if (receita.Categoria.Equals(id))
+                counter = "0";
+            }
+
+            int cont = 0;
+
+            while (true)
+            {
+                if (cont == Convert.ToInt32(counter))
                 {
-                    return receita;
+                    break;
+                }
+                cont = cont + 1;
+
+                reponse = firebase.Get("Receita/" + cont);
+                Receita receita = reponse.ResultAs<Receita>();
+                
+
+                if (receita != null && receita.Categoria.Id == id)
+                {
+                    receita.Id = Convert.ToInt32(cont);
+                    receitas.Add(receita);
                 }
             }
-            return null;
+
+            return receitas;
         }
 
         public  List<Receita> ListarTodos()
