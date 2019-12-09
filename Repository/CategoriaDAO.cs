@@ -19,7 +19,7 @@ namespace Repository
         };
         IFirebaseClient firebase;
 
-        public CategoriaDAO(Context context)
+        public CategoriaDAO()
         {
             firebase = new FireSharp.FirebaseClient(config);
         }
@@ -101,7 +101,7 @@ namespace Repository
 
                 Int32 intCounter = Convert.ToInt32(counter);
                 intCounter = intCounter + 1;
-
+                categoria.Id = intCounter;
                 var data = categoria;
 
                 reponseFirebase = await firebase.SetAsync("Categoria/" + intCounter, data);

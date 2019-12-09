@@ -33,11 +33,17 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Receita.Nome)
             </td>
+            @{
+                string pFinal = item.Preco.Value.ToString("C2");
+            }
             <td>
-                @Html.DisplayFor(modelItem => item.Preco)
+                @Html.DisplayFor(modelItem => pFinal)
             </td>
+            @{
+                string cFinal = item.Custo.Value.ToString("C2");
+            }
             <td>
-                @Html.DisplayFor(modelItem => item.Custo)
+                @Html.DisplayFor(modelItem => cFinal)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PrazoValidade)

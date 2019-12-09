@@ -36,8 +36,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Nome)
             </td>
+            @{
+                string pFinal = item.Preco.Value.ToString("C2");
+            }
             <td>
-                @Html.DisplayFor(modelItem => item.Preco)
+                @Html.DisplayFor(modelItem => pFinal)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Quantidade)

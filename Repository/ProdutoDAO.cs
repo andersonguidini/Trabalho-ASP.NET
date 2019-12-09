@@ -19,7 +19,7 @@ namespace Repository
         };
         IFirebaseClient firebase;
 
-        public ProdutoDAO(Context context)
+        public ProdutoDAO()
         {
             firebase = new FireSharp.FirebaseClient(config);
         }
@@ -105,7 +105,7 @@ namespace Repository
 
                 Int32 intCounter = Convert.ToInt32(counter);
                 intCounter = intCounter + 1;
-
+                produto.Id = intCounter;
                 var data = produto;
 
                 reponseFirebase = await firebase.SetAsync("Produto/" + intCounter, data);

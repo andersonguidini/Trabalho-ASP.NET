@@ -22,6 +22,6 @@ namespace Domain
         //[Display(Name = "Produtos do fornecedor:")]
         //[Required(ErrorMessage = "Campo obrigatório!")]
         //Fornecedor não da lista de produtos ao ser cadastrado
-        public List<Produto> Produtos { get; set; }
+        //public List<Produto> Produtos { get; set; }
     }
 }

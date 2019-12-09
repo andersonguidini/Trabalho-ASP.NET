@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-    //Annotations ASP.NET Core
-    [Table("Categorias")]
     public class Categoria
     {
         [Key]
