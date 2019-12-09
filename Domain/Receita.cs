@@ -23,10 +23,6 @@ namespace Domain
         [Required(ErrorMessage = "Campo obrigatório!")]
         public string Rendimento { get; set; }
 
-        //[Display(Name = "Ingredientes da receita:")]
-        //[Required(ErrorMessage = "Campo obrigatório!")]
-        //public List<Produto> Ingredientes { get; set; }
-
         [Required(ErrorMessage = "Campo obrigatório!")]
         [Display(Name = "Tempo de preparo da receita:")]
         public int TempoDePreparo { get; set; }

@@ -35,7 +35,7 @@ namespace BakeryManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Fornecedor fornecedor, string drpTipo)
+        public async Task<IActionResult> Create(Fornecedor fornecedor)
         {
             if (await _fornecedorDAO.Create(fornecedor))
             {
