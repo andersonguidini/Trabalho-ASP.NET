@@ -26,11 +26,11 @@ namespace Repository
 
         public Receita BuscarPorId(int id)
         {
-            int idReceita = id;
+            //int idReceita = id;
             FirebaseResponse reponse = firebase.Get("Receita/" + id);
             Receita receita = reponse.ResultAs<Receita>();
 
-            receita.Id = idReceita;
+            //receita.Id = idReceita;
 
             return receita;
         }
