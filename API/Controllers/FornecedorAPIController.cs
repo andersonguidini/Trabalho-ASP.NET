@@ -25,9 +25,9 @@ namespace API.Controllers
         //Get: /api/Fornecedor/BuscarPorNome/{Nome}
         [HttpGet]
         [Route("BuscarPorNome/{nome}")]
-        public IActionResult BuscarPorNome([FromRoute]Fornecedor fornecedor)
+        public IActionResult BuscarPorNome(string nome)
         {
-            Fornecedor f = _fornecedorDAO.BuscarPorNome(fornecedor);
+            Fornecedor f = _fornecedorDAO.BuscarPorNomeAPI(nome);
 
             if(f != null)
             {

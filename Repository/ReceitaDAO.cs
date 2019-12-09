@@ -49,6 +49,20 @@ namespace Repository
             return null;
         }
 
+        public Receita BuscarPorNomeAPI(string nome)
+        {
+            List<Receita> receitas = ListarTodos();
+
+            foreach (Receita receita in receitas)
+            {
+                if (receita.Nome.Equals(nome))
+                {
+                    return receita;
+                }
+            }
+            return null;
+        }
+
         public List<Receita> ListarPorCategoria(int? id)
         {
             List<Receita> receitas = new List<Receita>();

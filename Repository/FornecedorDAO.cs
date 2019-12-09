@@ -47,6 +47,20 @@ namespace Repository
             return null;
         }
 
+        public Fornecedor BuscarPorNomeAPI(string nome )
+        {
+            List<Fornecedor> fornecedores = ListarTodos();
+
+            foreach (Fornecedor fornecedor in fornecedores)
+            {
+                if (fornecedor.Nome.Equals(nome))
+                {
+                    return fornecedor;
+                }
+            }
+            return null;
+        }
+
         public List<Fornecedor> ListarTodos()
         {
             List<Fornecedor> fornecedores = new List<Fornecedor>();
