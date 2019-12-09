@@ -35,7 +35,7 @@ namespace BakeryManagement.Controllers
         // GET: ProdutoFinal/Create
         public IActionResult Create()
         {
-            ViewBag.Fornecedores = new SelectList(_receitaDAO.ListarTodos(),
+            ViewBag.Receitas = new SelectList(_receitaDAO.ListarTodos(),
                 "Id", "Nome");
 
             return View();
@@ -52,6 +52,8 @@ namespace BakeryManagement.Controllers
 
         public IActionResult Edit(int id)
         {
+            ViewBag.Receitas = new SelectList(_receitaDAO.ListarTodos(),
+                "Id", "Nome");
             return View(_produtoFinalDAO.BuscarPorId(id));
         }
 
