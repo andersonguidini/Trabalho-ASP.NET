@@ -12,7 +12,7 @@ namespace Repository
 {
     public class FornecedorDAO : IRepository<Fornecedor>
     {
-        //private readonly Context _context;
+        
         IFirebaseConfig config = new FirebaseConfig
         {
             AuthSecret = "l0mQk1Nwesby4YaQUeUPRm87yiOVFTE0q6RX7nW3",
@@ -20,10 +20,9 @@ namespace Repository
         };
         IFirebaseClient firebase;
 
-        public FornecedorDAO(Context context)
+        public FornecedorDAO()
         {
             firebase = new FireSharp.FirebaseClient(config);
-            //_context = context;
         }
 
         public Fornecedor BuscarPorId(int id)
@@ -103,7 +102,7 @@ namespace Repository
 
                 Int32 intCounter = Convert.ToInt32(counter);
                 intCounter = intCounter + 1;
-
+                fornecedor.Id = intCounter;
                 var data = fornecedor;
 
                 reponseFirebase = await firebase.SetAsync("Fornecedor/" + intCounter, data);

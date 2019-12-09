@@ -28,8 +28,8 @@ namespace BakeryManagement
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<Context>(options => options.UseSqlServer
-                (Configuration.GetConnectionString("BakeryConnection")));
+            //services.AddDbContext<Context>(options => options.UseSqlServer
+            //    (Configuration.GetConnectionString("BakeryConnection")));
 
             services.AddScoped<CategoriaDAO>();
             services.AddScoped<ProdutoDAO>();

@@ -59,8 +59,8 @@
             <tr>
                 <td>@final.Receita.Nome</td>
                 <td>@final.PrazoValidade</td>
-                <td>@final.Preco</td>
-                <td>@promocao</td>
+                <td>@final.Preco.Value.ToString("C2")</td>
+                <td>@promocao.Value.ToString("C2")</td>
             </tr>      
          }
     </tbody>
