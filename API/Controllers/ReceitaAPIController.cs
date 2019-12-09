@@ -24,9 +24,9 @@ namespace API.Controllers
         //Get: /api/Receita/BuscarPorNome/{Nome}
         [HttpGet]
         [Route("BuscarPorNome/{nome}")]
-        public IActionResult BuscarPorNome([FromRoute]Receita receita)
+        public IActionResult BuscarPorNome(string nome)
         {
-            Receita r = _receitaDAO.BuscarPorNome(receita);
+            Receita r = _receitaDAO.BuscarPorNomeAPI(nome);
 
             if (r != null)
             {
